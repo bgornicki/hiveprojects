@@ -50,8 +50,6 @@ services:
 
   postgres:
     image: postgres
-    ports:
-      - "5432:5432"
     environment:
       - POSTGRES_PASSWORD=${STAGING_DB_PASSWORD}
       - POSTGRES_USER=${STAGING_DB_USER}
