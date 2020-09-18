@@ -1,0 +1,100 @@
+{% extends "package/base.html" %}
+
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}{{ action|title }} {% trans "package" %}{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/edit_form.css?deployment={{ DEPLOYMENT_DATETIME }}" type="text/css"/>
+  {{ block.super }}
+{% endblock %}
+
+{% block body %}
+    <div class="col-md-12">
+        <h2>{{ package.name }}'s Timeline</h2>
+    </div>
+
+    <div class="col-md-12">
+        <p>Timeline is designed to give a user quick information about important things which happen in the project lately and in the past. People are more comfortable using applications which give <b>frequent updates</b> - communication with a users is a key!</p>
+
+        <p>Users of SteemProjects receive newsletter every week with updates from their favorite projects. If timeline event url will be a link to Steemit, users will be able to help monetize a project by <a href="https://github.com/noisy/steemprojects.com/issues/40" target="_blank" rel="noopener noreferrer">smart autoupvotes</a>.</p>
+
+    </div>
+    <div class="col-md-12">
+        <h3>Insert Rules <a href="{% url "add_ruleset" package.slug %}" class="m-btn m-btn--small">Create New RuleSet</a></h3>
+        <p>You don't have to add new items to Timeline manually. You can defined rules, according to which Timeline will be populated automatically!</p>
+
+        {% if rulesets|length %}
+            <p>Timeline Events are automatically added to Timeline based on following rule sets:</p>
+        {% endif %}
+        <ul class="m-ruleset-list">
+            {% for ruleset in rulesets %}
+                <li class="ruleset">{{ ruleset.name }}
+                    <a href="{% url "delete_ruleset" package.slug ruleset.id %}" class="m-btn m-btn--small">Delete</a>
+                    <a href="{% url "edit_ruleset" package.slug ruleset.id %}" class="m-btn m-btn--small">Edit</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="col-md-12">
+        <h3>Timeline Events <div id="formset-add-new-form-btn" class="m-btn m-btn--small">Add New Event</div></h3>
+        <form action="{{ request.path }}" method="post" id="package-form">
+            {% csrf_token %}
+            {{ formset.management_form }}
+            <div id="event-forms" class="m-timeline-form">
+                {% for form in formset reversed %}
+                    <div class="event-form">
+                        {{ form }} <span class="rm-btn te-entry"><i class="icon-close"></i>Remove</span>
+                    </div>
+                {% endfor %}
+            </div>
+            <input class="m-btn m-btn--inverse" type="submit" name="add" value="{{ action }} {% trans "timeline" %}">
+        </form>
+
+        <div id="empty-form" style="display:none;">
+            <div class="event-form">
+                {{ formset.empty_form }} <span class="rm-btn te-entry"><i class="icon-close"></i>Remove</span>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block extra_body %}
+<script src="{{ STATIC_URL }}js/urlify.js" type="text/javascript"></script>
+<script src="{{ STATIC_URL }}js/package_form.js" type="text/javascript"></script>
+<script type="text/javascript">
+    $(function(){
+
+        var rmEntry = function(event) {
+            var eventForm = $(event.target).closest('.event-form');
+            eventForm.find('input[type=checkbox]').prop('checked', true);
+            eventForm.hide();
+        };
+
+        var rmForm = function(event) {
+            var total_forms = $('#id_form-TOTAL_FORMS');
+            var form_idx = total_forms.val();
+            total_forms.val(parseInt(form_idx) - 1);
+
+            $(event.target).closest('.event-form').remove();
+        };
+
+        $('.rm-btn.te-entry').click(rmEntry);
+        $('.rm-btn.te-form').click(rmForm);
+
+        $('#formset-add-new-form-btn').click(function (event) {
+            var total_forms = $('#id_form-TOTAL_FORMS');
+            var form_idx = total_forms.val();
+            total_forms.val(parseInt(form_idx) + 1);
+
+            var new_form = $($('#empty-form').html().replace(/__prefix__/g, form_idx));
+            $('#event-forms').prepend(new_form);
+            new_form.find('.rm-btn.te-form').click(rmForm);
+        });
+    });
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,49 @@
+stages:
+  - build
+  - deploy
+
+image: docker:git
+
+services:
+  - docker:dind
+
+variables:
+  STACK_NAME: hiveprojects
+
+build:
+  stage: build
+  only:
+    - master
+  before_script:
+    - echo $CI_JOB_TOKEN | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin
+  script:
+    - docker build -f app/Dockerfile app -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA -t $CI_REGISTRY_IMAGE:latest
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+    - docker push $CI_REGISTRY_IMAGE:latest
+  after_script:
+    - docker images
+
+deploy-stack:
+  stage: deploy
+  when: manual
+
+  environment:
+    name: production
+    url: https://hiveprojects.io
+
+  before_script:
+    - mkdir -p ~/.docker
+    - echo "$CORE_SWARM_TLSCACERT" > ~/.docker/ca.pem
+    - echo "$CORE_SWARM_TLSCERT" > ~/.docker/cert.pem
+    - echo "$CORE_SWARM_TLSKEY" > ~/.docker/key.pem
+
+    # Login to gitlab docker registry
+    - echo $CORE_DEPLOY_TOKEN_KEY | docker -H $CORE_SWARM_HOST --tlsverify login -u $CORE_DEPLOY_TOKEN_NAME $CI_REGISTRY --password-stdin
+
+    # Pull all necessary images before deploy
+    - cat stack/docker-compose.staging.yml | grep -oE 'image:([ a-zA-Z0-9\:\/\.-]*)' | sed "s~image:~~g" | while read -r image ; do docker -H $CORE_SWARM_HOST --tlsverify pull $image; done
+
+  script:
+    - docker -H $CORE_SWARM_HOST --tlsverify stack deploy -c stack/docker-compose.staging.yml --with-registry-auth ${STACK_NAME}-staging
+  only:
+    - master

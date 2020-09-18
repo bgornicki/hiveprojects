@@ -1,0 +1,308 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load package_tags %}
+
+{% block head_title %}{{ package.name }}{% endblock %}
+
+{% block extra_head %}
+  <meta name="description" content="{{ package.repo_description }}" />
+  <meta name="keywords" content="{{ package.grid_set.all|join:',' }}" />
+  <script src="//cdnjs.cloudflare.com/ajax/libs/vis/4.20.1/vis.min.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/vis/4.20.1/vis.min.css" type="text/css" />
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/package.css?deployment={{ DEPLOYMENT_DATETIME }}" type="text/css" />
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/timeline.css?deployment={{ DEPLOYMENT_DATETIME }}" type="text/css" />
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/lightslider.css?deployment={{ DEPLOYMENT_DATETIME }}" type="text/css"/>
+  {{ block.super }}
+{% endblock %}
+
+{% block body %}
+
+<div class="row">
+    <div class="col-sm-6 col-lg-6 title-row m-title-panel">
+        <h1 class="m-title-panel__title">{{ package.name }}</h1>
+        <a class="m-title-panel__link" href="{% url 'edit_package' package.slug %}">
+            <i class="m-title-panel__edit-icon"></i>
+        </a>
+        <span class="m-title-panel__status m-title-panel__status--{{ package.status|lower }}">{{ package.get_status_display }}</span>
+        <i class="m-title-panel__status-help-icon" title="{{ package.status_description }}"></i>
+        <p class="category">
+            <i class="material-icons">format_list_bulleted</i>
+            <a href="{% url "category" package.category.slug %}"> {{ package.category }}</a>
+        </p>
+    </div>
+    <div class="col-sm-6 col-lg-6 m-action-panel">
+        {% fav_button %}
+
+        {% if request.user.is_authenticated and package.is_draft %}
+            {% if can_edit_package %}
+                {% if package.is_awaiting_approval %}
+                    <a class="m-btn" href="{% url 'project_approval' package.slug 'cancel' %}">
+                        Cancel approval request
+                    </a>
+                {% else %}
+                    <a class="m-btn" href="{% url 'project_approval' package.slug 'request' %}">
+                        Submit for approval
+                    </a>
+                {% endif %}
+            {% endif %}
+
+            {% if user.is_staff or user.profile.is_trusted %}
+                <a class="m-btn" href="{% url 'publish_project' package.slug %}">
+                    Publish
+                </a>
+            {% endif %}
+        {% endif %}
+    </div>
+
+</div>
+<div class="row">
+    <div class="col-sm-6 col-lg-4">
+        {% if package.url %}
+            <div class="website">
+                <h3>Project Website</h3>
+                <p><a href="{{ package.url }}" target="_blank" rel="noopener noreferrer">{{ package.url }}</a></p>
+            </div>
+        {% endif %}
+        {% if package.announcement_post %}
+            <div class="announcement">
+                <h3>Announcement</h3>
+                <p><a href="{{ package.announcement_post }}">{{ package.announcement_post|truncatechars:"60" }}</a></p>
+            </div>
+        {% endif %}
+        {% if package.contact_url %}
+            <div class="contact">
+                <h3>Contact</h3>
+                <p><a href="{{ package.contact_url }}" target="_blank" rel="noopener noreferrer">{{ package.contact_url }}</a></p>
+            </div>
+        {% endif %}
+        {% if package.grids|length %}
+            <div class="grids">
+                <h3>Comparison grids</h3>
+                <div>
+                {% for grid in package.grids %}
+                    <a href="{% url 'grid' grid.slug %}" title="{{ grid.description }}">{{ grid }}</a>{% if not forloop.last %}<br> {% endif %}
+                {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="col-sm-6 col-lg-4">
+        <div class="description">
+            <h3>Description</h3>
+            <p>{{ package.description }}</p>
+        </div>
+        {% if package.team_members.count %}
+        <div class="team clearfix">
+            <h3>Team</h3>
+            <div>
+                {% for membership in package.teammembership_set.all %}
+                    {% if membership.role_confirmed_by_account != False %}
+                    <div class="contributor team-member">
+                        <img class="img-circle" src="{{ membership.account.avatar_medium }}">
+                        <a class="name" href="{{ membership.account.profile_page }}">{{ membership.account.name }}</a> - {{ membership.role|title }}
+                        {% if membership.role_confirmed_by_account == None %}
+                            <span class="role-panel">
+                            {% if request.user == membership.account.profile.user %}
+                                <a class="role-confirm role-confirm-verify" href="{% url 'profile_confirm_role' membership.id 'verify' %}"><i class="material-icons">done</i>Verify this</a>
+                                <a class="role-confirm role-confirm-deny" href="{% url 'profile_confirm_role' membership.id 'deny' %}"><i class="material-icons">clear</i>Deny</a>
+                            {% else %}
+                                <i class="material-icons" title="Watch out! This information is not verified by {{ membership.account.name }}.">info_outline</i>
+                            {% endif %}
+                            </span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        {% if not_team_contributors|length %}
+            <div class="contributors clearfix">
+                <h3>Contributors
+                    <sup>
+                        <i class="material-icons" title="{% trans "Contributors - volunteers which are officially not in the team, but helped because they wanted. Very often this is possible only if project is open-source." %}">info_outline</i>
+                    </sup>
+                </h3>
+                <div>
+                    {% for contributor in not_team_contributors|slice:"10" %}
+                        <div class="contributor">
+                            <img class="img-circle" src="{{ contributor.avatar_small }}">
+                            <a class="name" href="{{ contributor.profile_page }}">{{ contributor.name }}</a>
+                        </div>
+                    {% endfor %}
+                    {% if not_team_contributors|length > 10 %}
+                        <a class="more">and {{ not_team_contributors|length|add:"-10" }} more...</a>
+
+                        <div class="more-contributors">
+                            {% for contributor in not_team_contributors|slice:"10:" %}
+                                <div class="contributor">
+                                    <img class="img-circle" src="{{ contributor.avatar_small }}">
+                                    <a class="name" href="{{ contributor.profile_page }}">{{ contributor.name }}</a>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="development clearfix">
+            <h3>Development
+{#                <a href="{% url 'fetch_package_data' package.slug %}" title="{% trans "Fetch latest data" %}">#}
+{#                    <i class="material-icons">sync</i>#}
+{#                </a>#}
+            </h3>
+            {% if package.repo_url %}
+            <div class="m-repo-section">
+                {% if repo.title == "Github" %}
+                    <div class="m-repo-section__column m-repo-section__column--first">
+                        <a class="m-repo-section__link" href="{{ package.repo_url }}" target="_blank" rel="noopener noreferrer">
+                            <i class="m-repo-section__icon icon-github"></i>
+                        </a>
+                    </div>
+                    <div class="m-repo-section__column m-repo-section__column--wide">
+                        <div class="m-repo-section__text">Commits</div>
+                        <img class="m-repo-section__chart" src="https://chart.googleapis.com/chart?cht=bvg&chs=105x20&chd=t:{{package.commits_over_52}}&chco=666666&chbh=1,1,1&chds=0,20" />
+                    </div>
+                    <div class="m-repo-section__column m-repo-section__column--centered">
+                        <i class="m-repo-section__icon--small material-icons">star_border</i>
+                        <div class="m-repo-section__text">{{ package.repo_watchers }}</div>
+                    </div>
+                    <div class="m-repo-section__column m-repo-section__column--centered">
+                        <i class="m-repo-section__icon--small material-icons">call_split</i>
+                        <div class="m-repo-section__text">{{ package.repo_forks }}</div>
+                    </div>
+                    <p>
+{#                        {% if package.last_fetched %}#}
+{#                            Last fetched: {{ package.last_fetched|timesince }} ago#}
+{#                        {% endif %}#}
+                    </p>
+                {% else %}
+                    <p>No detail information. Only github repositories are right now supported on SteemProjects</p>
+                {% endif %}
+            </div>
+            {% else %}
+            <div>No information :( This project is not open-source <sup><a href="https://www.youtube.com/watch?v=1ehpgbb3XD0" target="_blank" rel="noopener noreferrer"><i class="material-icons">info_outline</i></a></sup></div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-sm-12 col-lg-4">
+        <div class="m-gallery" >
+            <ul id="image-gallery" class="cS-hidden">
+                {% if not project_imgs %}
+                    <li>
+                        <img class="m-gallery__image" src="{{ STATIC_URL }}img/please_add_images.png"/>
+                    </li>
+                {% else %}
+                    {% for img in project_imgs %}
+                        <li data-thumb="{{ img|thumb:64 }}">
+                            <img class="m-gallery__image" src="{{ img|thumb:1280 }}"/>
+                        </li>
+                    {% endfor %}
+                {% endif %}
+            </ul>
+        </div>
+        {% if can_edit_package %}
+            <a id="edit-images" href="{% url 'edit_images' package.slug %}" class="m-btn">Add/Edit project images</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <h2>Timeline  <a href="{% url 'edit_timeline' package.slug %}"><span class="glyphicon glyphicon-pencil"></span></a></h2>
+        <div id="timeline" style=""></div>
+        <script type="text/javascript">
+            var container = document.getElementById('timeline');
+
+            var items = new vis.DataSet([
+            {% for event in timeline_events %}
+                {
+                    id: {{ forloop.counter }},
+                    content: '<div class="event-date">{{ event.date}}</div><a href="{{ event.url}}" target="_blank" rel="noopener noreferrer">{{ event.name}}</a>',
+                    start: '{{ event.date|date:"c" }}'},
+            {% endfor %}
+            ]);
+
+            var options = {
+                //align: 'left',
+                min: new Date(2016, 3, 1),
+                max: new Date(Date.now() + 1000*60*60*24*31), // next month
+                {% if timeline_axis_start and timeline_axis_end %}
+                    start: '{{ timeline_axis_start|date:"c" }}',
+                    end: '{{ timeline_axis_end|date:"c" }}',
+                {% endif %}
+                showCurrentTime: false
+            };
+
+            var timeline = new vis.Timeline(container, items, options);
+            container.addEventListener("mouseover", function(){timeline.redraw();});
+        </script>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+  {{ block.super }}
+  <script src="{{ STATIC_URL }}js/underscore.js" type="text/javascript"></script>
+  <script src="{{ STATIC_URL }}js/gh3.js" type="text/javascript"></script>
+{% endblock %}
+
+{% block extra_body %}
+<script src="{{ STATIC_URL }}js/lightslider.js"></script>
+<script>
+     $(document).ready(function() {
+        $('#image-gallery').lightSlider({
+            gallery:true,
+            item:1,
+            thumbItem:9,
+            slideMargin: 0,
+            speed:500,
+            auto:false,
+            loop:true,
+            adaptiveHeight: true,
+            verticalHeight: 200,
+            onSliderLoad: function() {
+                $('#image-gallery').removeClass('cS-hidden');
+            }
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(function() {
+
+        $('#find-a-grid').click(function(e) {
+            e.preventDefault();
+            $('#find-a-grid').hide();
+            $('#find-a-grid-form').show();
+            $('#find-a-grid-input').focus();
+
+            $('#find-a-grid-input').keyup(function() {
+                var search_text = $('input#find-a-grid-input').val();
+                var search_text = '{% url 'ajax_grid_list' %}?q=' + search_text + '&package_id={{ package.id }}';
+                console.log(search_text);
+                $.get(search_text, function(data) {
+                  $('#target').html(data).show("slow");
+                });
+            });
+
+            $("#find-a-grid-form").keypress(function(e) {
+                  if (e.which == 13) {
+                    return false;
+                  };
+            });
+
+        });
+
+        var more = $('.more');
+        more.click(function(e){
+            e.preventDefault();
+            more.closest('.contributors').toggleClass('show-more');
+        });
+
+    });
+</script>
+{% endblock %}

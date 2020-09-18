@@ -1,0 +1,142 @@
+@import "new/base/variables";
+
+#package-editlink,
+#package-gridname {
+    display: inline;
+}
+
+
+#package-sitelist li {
+    margin: 9px 0;
+}
+
+.clear {
+    clear: both;
+}
+
+.badges { line-height: 26px; list-style: none; display: inline; }
+/* .badges li { display: inline; } */
+.badges a, .badges a:visited { border-bottom-left-radius: 5px 5px; border-bottom-right-radius: 5px 5px; border-top-left-radius: 5px 5px; border-top-right-radius: 5px 5px; font-size: 11px; height: 16px; margin: 0px; padding: 5px 10px; background: #444; color: white; text-decoration: none; font-weight: 700; }
+.badges a:hover { background: #2F1D1D; }
+
+#package-archive-list, #package-archive-list li { list-style:none; }
+
+.main-screenshot{
+    width: 100%;
+}
+
+.contributors h3 sup i {
+    font-size: 14px;
+    cursor: help;
+}
+
+.contributor.team-member {
+    float: none;
+    padding: 5px;
+    font-size: 18px;
+}
+
+.contributor {
+    float: left;
+    padding: 3px 3px 3px 5px;
+}
+
+.contributor.team-member img {
+    /* github fetches large generated avatars even when '?size=' is specified */
+    height: 45px;
+    width: 45px;
+}
+.contributor img {
+    /* github fetches large generated avatars even when '?size=' is specified */
+    height: 30px;
+    width: 30px;
+}
+
+.contributor a.name{
+    padding: 0 10px;
+    font-size: 16px;
+    color: $base-link-color;
+}
+
+.contributors .more {
+    font-size: 16px;
+    float: left;
+    height: 36px;
+    line-height: 32px;
+    cursor: pointer;
+}
+.contributors .more-contributors {
+    display: none;
+}
+
+.contributors.show-more .more {
+    display: none;
+}
+
+.contributors.show-more .more-contributors {
+    display: initial;
+}
+
+.contributor.team-member a.name{
+    padding: 0 0 0 10px;
+    font-size: 18px;
+}
+
+.contributor a.name:hover{
+    text-decoration: none;
+}
+
+.title-row p {
+    position: absolute;
+    bottom: 4px;
+    font-size: 13px;
+    margin-bottom: 0;
+    line-height: 1.3;
+}
+
+.title-row p i.material-icons {
+    position: relative;
+    top: 1px;
+    font-size: 12px;
+}
+
+#edit-images {
+    float: right;
+}
+
+
+.role-panel i.material-icons {
+    font-size: 18px;
+    position: relative;
+    top: 2px;
+    margin-left: 5px;
+    cursor: text;
+    vertical-align: initial;
+}
+
+.role-panel .role-confirm {
+    margin: 0 5px;
+
+}
+
+.role-panel .role-confirm i.material-icons {
+    margin: 0 5px;
+    cursor: pointer;
+    top: 3px;
+}
+
+.role-panel a.role-confirm-verify {
+    color: #4aa1f1;
+}
+
+.role-panel a.role-confirm-verify i.material-icons {
+    color: #4aa1f1;
+}
+
+.role-panel a.role-confirm-deny {
+    color: #bf2155;
+}
+
+.role-panel a.role-confirm-deny i.material-icons {
+    color: #bf2155;
+}

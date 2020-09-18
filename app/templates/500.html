@@ -1,0 +1,86 @@
+{% spaceless %}
+{% load i18n profile_tags static %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" xml:lang="{{ LANGUAGE_CODE }}" lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{% block head_title_base %}{{ SITE_TITLE }} : {% block head_title %}{% endblock %}{% endblock %}</title>
+    {% include "vendor/ga.html" %}
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/main.css?deployment={{ DEPLOYMENT_DATETIME }}" type="text/css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/oc.css?deployment={{ DEPLOYMENT_DATETIME }}" type="text/css" />
+    <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon_{{ FRAMEWORK_NAME|lower }}projects.ico" />
+
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <nav class="m-navbar">
+                <div class="navbar-header col-sm-12 col-md-3 col-lg-2 col-lg-2-mod">
+                    <label for="navbar-toggle-cbox" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="m-navbar--toggle-menu-btn"></span>
+                    </label>
+
+                    <a class="navbar-brand" href="{% url 'home' %}">
+                        <div class="m-navbar__brand-image"></div>
+                    </a>
+                </div>
+
+                <div class="col-sm-12 col-md-9 col-lg-10 col-lg-10-mod">
+                    <input type="checkbox" id="navbar-toggle-cbox">
+                    <input type="checkbox" id="navbar-toggle-cbox2">
+                    <div id="navbar" class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="m-navbar--item"><a class="m-navbar--item-text" href="{% url 'home' %}">{% trans "Home" %}</a></li>
+                            <li class="m-navbar--item"><a class="m-navbar--item-text"  href="{% url 'faq' %}">{% trans "FAQ" %}</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <div style="max-width: 320px; height: 400px; margin: 50px auto 100px auto;">
+        <h1>Error</h1>
+        <p>It looks like @noisy screwed up something...</p>
+        <video style="width: 320px; height: 240px;" width="320" autoplay onended="showDialog()">
+            <source src="{{ STATIC_URL }}video/error_reaction.mp4" type="video/mp4">
+            <source src="{{ STATIC_URL }}video/error_reaction.webm" type="video/webm">
+            <source src="{{ STATIC_URL }}video/error_reaction.ogg" type="video/ogg">
+            <img style="width: 320px; height: 240px;" src="{{ STATIC_URL }}video/error_reaction.gif">
+        </video>
+        {% if request.sentry.id %}
+            <p>Crash report was already sent to him. It looks like he already have a clue what the problem might be, but you can help him by <a href="javascript:showDialog()">telling what just happen from your perspective.</a></p>
+        {% else %}
+            <p>Usually in cases like that, crash-report is automatically sent directly to <a href="https://steemit.com/@noisy">@noisy</a>. But this time he screwed up something so badly, that even crash-raporting-tool failed :(<br><br>Could you do him a big favour and contact <a href="https://steemit.chat/direct/noisy">him directly on steemit.chat</a>, to tell what just happen from your perspective?</p>
+        {% endif %}
+    </div>
+
+    {% include "footer.html" %}
+
+    <script src="https://cdn.ravenjs.com/2.1.0/raven.min.js"></script>
+    {% if request.sentry.id %}
+        <script>
+            var was_displayed = false;
+            function showDialog(){
+                if (!was_displayed){
+                    was_displayed = true;
+                    Raven.showReportDialog({
+                        eventId: '{{ request.sentry.id }}',
+                        dsn: '{{ SENTRY_PUBLIC_DSN }}',
+                        {% if request.user.is_authenticated %}
+                        user: {
+                            name: '{{ request.user.username }}',
+                            email: '{{ request.user.email }}',
+                        }
+                        {% endif %}
+                    });
+                }
+            }
+        </script>
+    {% endif %}
+</body>
+</html>
+{% endspaceless %}

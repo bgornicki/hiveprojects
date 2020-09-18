@@ -1,0 +1,69 @@
+version: "3.7"
+services:
+
+  app:
+    build:
+      context: ../app
+    command: /start.sh
+    volumes:
+      - ../app:/app
+      - media:/data/media
+      - static:/data/static
+    environment:
+      - SITE_URL=https://hiveprojects.io
+      - SECRET_KEY=
+      - DJANGO_SETTINGS_MODULE=settings.docker-local
+      - SITE_TITLE=Hive Projects
+      - FRAMEWORK_NAME=hive
+      - POSTGRES_USER=hiveprojects
+      - POSTGRES_PASSWORD=hiveprojects
+      - POSTGRES_DB=hiveprojects
+      - STEEMCONNECT_APP_ID=
+      - STEEMCONNECT_APP_SECRET=
+      - DJANGO_MAILGUN_API_KEY=
+      - MAILGUN_SENDER_DOMAIN=
+      - DEFAULT_FROM_EMAIL=Hive Projects <noreply@hiveprojects.io>
+      - SERVER_EMAIL=Hive Projects <info@hiveprojects.io>
+      - DJANGO_SENTRY_DSN=
+      - STEEM_NODES=https://api.steemit.com
+      - PROJECT_GITHUB_REPOSITORY_URL=https://gitlab.com/engrave/hiveprojects
+      - PROJECT_SLUG_ON_PAGE=hiveprojects
+      - STEEM_ACCOUNT=
+      - STEEM_POSTING_KEY=
+      - GITHUB_API_SECRET=
+      - GITHUB_APP_ID=
+      - GITHUB_USERNAME=
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - media:/data/media
+      - static:/data/static
+      - ./nginx:/etc/nginx/conf.d
+
+  redis:
+    image: redis
+#    logging:
+#      driver: none
+    volumes:
+    - db_redis:/data
+
+  postgres:
+    image: postgres
+    ports:
+      - "5432:5432"
+#    logging:
+#      driver: none
+    environment:
+      - POSTGRES_PASSWORD=hiveprojects
+      - POSTGRES_USER=hiveprojects
+    volumes:
+    - db_postgres:/var/lib/postgresql/data
+
+volumes:
+  db_redis:
+  db_postgres:
+  media:
+  static:

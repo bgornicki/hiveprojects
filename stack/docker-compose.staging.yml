@@ -1,0 +1,65 @@
+version: "3.7"
+services:
+
+  app:
+    image: projects
+    command: /start.sh
+    volumes:
+      - ../app:/app
+      - media:/data/media
+      - static:/data/static
+    environment:
+      - SITE_URL=https://staging.hiveprojects.io
+      - SECRET_KEY=${STAGING_SECRET_KEY}
+      - DJANGO_SETTINGS_MODULE=settings.staging
+      - SITE_TITLE=Hive Projects
+      - FRAMEWORK_NAME=hive
+      - POSTGRES_USER=${STAGING_DB_USER}
+      - POSTGRES_PASSWORD=${STAGING_DB_PASSWORD}
+      - POSTGRES_DB=${STAGING_DB_DATABASE}
+      - STEEMCONNECT_APP_ID=${HIVESIGNER_APP_ID}
+      - STEEMCONNECT_APP_SECRET=${HIVESIGNER_APP_SECRET}
+      - DJANGO_MAILGUN_API_KEY=${MAILGUN_API_KEY}
+      - MAILGUN_SENDER_DOMAIN=${MAILGUN_SENDER_DOMAIN}
+      - DEFAULT_FROM_EMAIL=Hive Projects <noreply@hiveprojects.io>
+      - SERVER_EMAIL=Hive Projects <info@hiveprojects.io>
+      - DJANGO_SENTRY_DSN=${SENTRY_DSN}
+      - STEEM_NODES=https://api.steemit.com
+      - PROJECT_GITHUB_REPOSITORY_URL=https://gitlab.com/engrave/hiveprojects
+      - PROJECT_SLUG_ON_PAGE=hiveprojects
+      - STEEM_ACCOUNT=${HIVE_USERNAME}
+      - STEEM_POSTING_KEY=${HIVE_POSTING_KEY}
+      - GITHUB_API_SECRET=${GITHUB_API_SECRET}
+      - GITHUB_APP_ID=${GITHUB_APP_ID}
+      - GITHUB_USERNAME=${GITHUB_USERNAME}
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - media:/data/media
+      - static:/data/static
+      - ./nginx:/etc/nginx/conf.d
+
+  redis:
+    image: redis
+    volumes:
+      - db_redis:/data
+
+  postgres:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=${STAGING_DB_PASSWORD}
+      - POSTGRES_USER=${STAGING_DB_USER}
+    volumes:
+      - db_postgres:/var/lib/postgresql/data
+
+volumes:
+  db_redis:
+  db_postgres:
+  media:
+  static:

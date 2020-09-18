@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% load i18n profile_tags static %}
+
+{% block head_title %}{% trans "Login" %}{% endblock %}
+
+{% block body_class %}login{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ STATIC_URL }}css/login.css?deployment={{ DEPLOYMENT_DATETIME }}" type="text/css"/>
+{% endblock %}
+
+{% block body %}
+    <div class="jumbotron">
+        <h1>Login</h1>
+        <a class="login-btn login-github" href="{% url 'social:begin' 'github' %}"><i class="icon-github"></i>Github</a>
+{#        <a class="login-btn login-facebook" href="{% url 'social:begin' 'facebook' %}"><i class="icon-facebook"></i>Facebook</a>#}
+{#        <a class="login-btn login-steemconnect" href="{% url 'social:begin' 'steemconnect' %}"><i class="icon-steem"></i>SteemConnect</a>#}
+    </div>
+{% endblock %}
+

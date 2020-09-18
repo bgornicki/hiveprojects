@@ -1,0 +1,155 @@
+{% load i18n %}
+{% load package_tags %}
+
+<div class="homepage">
+    <!-- GRIDs -->
+    <div class="col-sm-12 col-lg-2 col-lg-2-mod compare-tools m-list m-list--compare clearfix">
+        <h1 class="m-list__title"><span class="m-list__icon"></span>Compare tools</h1>
+        <div class="m-list__list-group">
+            {% for grid in grid_headers %}
+                <div class="col-xs-6 col-sm-4 col-md-3 col-lg-12 tool-item">
+                    <a class="m-list__list-group-item" href="{% url 'grid' grid.slug %}" title="{{ grid.description }}">
+                        {{ grid.title|truncatechars:"30" }}
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="col-sm-4 col-lg-4 col-lg-4-mod categories m-list m-list--categories">
+        <h1 class="m-list__title"><span class="m-list__icon"></span>Categories</h1>
+        <div class="m-list__list-group">
+        <!-- start Categories panel -->
+        {% for category in categories %}
+            <a href="{% url 'category' category.slug %}" class="m-list__list-group-item">
+                <h4 class="m-list__list-group-item-heading">
+                    {{ category.title_plural }}<span class="m-list__header-counter">{{ category.count }}</span>
+                </h4>
+                <p class="m-list__list-group-item-text">{{ category.description }}</p>
+            </a>
+        {% endfor %}
+        <!-- end Categories panel -->
+        </div>
+    </div>
+    <div class="col-sm-8 col-lg-6 col-lg-6-mod latest-projects m-list m-list--latest-projects">
+        <h1 class="m-list__title"><span class="m-list__icon"></span>Latest projects</h1>
+        <div class="m-list__list-group">
+        {% for package in latest_packages %}
+            <div class="m-list__list-group-item">
+                {% project_tile package %}
+            </div>
+        {% endfor %}
+        </div>
+        <div class="m-list__more">
+            <a href="{% url 'packages' %}">More projects</a>
+        </div>
+    </div>
+</div>
+  {% comment %}
+  <div class="row">
+    <h2><i>{{ SITE_TITLE }} is a directory of reusable apps, sites, tools, and more for your {{ FRAMEWORK_NAME }} projects.</i></h2>
+    <p><b>{{ package_count }}</b> {% trans "projects and counting!" %}</p>
+    {#<p><a href="{% url 'py3_compat' %}"><b>{{ py3_compat }}</b> {% trans "packages compatible with Python 3!" %}</a></p>#}
+    <p><b>{{ open_source_count}}</b> {% trans "projects are open source!" %}</p>
+  </div>
+  {% endcomment %}
+
+{% comment %}
+<div class="container">
+  <div class="row">
+    <div class="col-sm-4 col-lg-4">
+      <!-- start Categories panel -->
+      <div class="panel panel-default">
+        <div class="panel-heading clearfix">
+          <h3 class="panel-title pull-left">{% trans "Project Categories" %}</h3>
+        </div>
+        <div class="panel-body">
+          {% for category in categories %}
+            <h3><a href="{% url 'category' category.slug %}">{{ category.title_plural }}</a> ({{ category.count }})</h3>
+            <p>{{ category.description }}</p>
+          {% endfor %}
+        </div>
+      </div>
+      <!-- end Categories panel -->
+
+    </div>
+
+    <div class="col-sm-4 col-lg-4">
+      <!-- Latest 5 Projects Added -->
+      <div class="panel panel-default">
+        <div class="panel-heading clearfix">
+          <h3 class="panel-title pull-left">{% trans "Latest 5 Projects Added" %}</h3>
+        </div>
+          <div class="list-group">
+            {% for package in latest_packages %}
+              <a href="{{ package.get_absolute_url }}" class="list-group-item">
+                <h4 class="list-group-item-heading">{{ package.name }}</h4>
+
+                <p class="list-group-item-text">
+                  {% with package.description|truncatewords:25 as short %}
+                    {% if package.description|length > short|length %}
+                      {{ short|slice:"-3" }}...
+                    {% else %}
+                      {{ short }}
+                    {% endif %}
+                  {% endwith %}
+                </p>
+              </a>
+            {% endfor %}
+        </div>
+      </div>
+      <!-- end Latest 5 Projects Added -->
+
+      <!-- start Random 5 -->
+      <div class="panel panel-default">
+        <div class="panel-heading clearfix">
+          <h3 class="panel-title pull-left">{% trans "Random 5" %}</h3>
+        </div>
+          <div class="list-group">
+            {% for package in random_packages %}
+              <a href="{{ package.get_absolute_url }}" class="list-group-item">
+                <h4 class="list-group-item-heading">{{ package.name }}</h4>
+
+                <p class="list-group-item-text">
+                  {% with package.description|truncatewords:25 as short %}
+                    {% if package.description|length > short|length %}
+                      {{ short|slice:"-3" }}...
+                    {% else %}
+                      {{ short }}
+                    {% endif %}
+                  {% endwith %}
+                </p>
+              </a>
+            {% endfor %}
+          </div>
+      </div>
+      <!-- end Random 5 -->
+
+    </div>
+
+    <div class="col-sm-4 col-lg-4">
+      <!-- start We Need Your Help panel -->
+      <div class="panel panel-default">
+        <div class="panel-heading clearfix">
+          <h3 class="panel-title pull-left">{% trans "Add projects and grids" %}</h3>
+        </div>
+        <div class="panel-body">
+          <p>
+            {% trans "Know of any project not listed here? Add them now! It's quick and easy." %}
+          </p>
+          <p>
+            <a class="btn btn-default" href="{% url 'add_package' %}">{% trans "add project »" %}</a>
+          </p>
+          <p>
+            {% trans "Or add a grid comparing the features of 2 or more similar projects." %}
+          </p>
+          <p>
+            <a class="btn btn-default" href="{% url 'add_grid' %}">{% trans "add grid »" %}</a>
+          </p>
+        </div>
+      </div>
+      <!-- end We Need Your Help panel -->
+    </div>
+  </div>
+</div>
+{% endcomment %}

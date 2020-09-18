@@ -1,0 +1,107 @@
+@import "new/base/variables";
+
+.img-circle {
+    margin: 5px;
+}
+
+
+.project-form .field-label {
+    text-align: right;
+    float: right;
+    height: 40px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    line-height: 1.1;
+}
+
+.project-form .tm-form .field-label {
+    color: #7e93a0;
+}
+
+.project-form .field {
+    text-align: right;
+}
+
+
+.project-form {
+    .field {
+        input,
+        textarea,
+        select
+        {
+            width: 100%;
+            height: 40px;
+            margin-bottom: 20px;
+        }
+    }
+}
+
+.project-form .field select {
+    width: 180px;
+    float: left;
+}
+
+
+.project-form .field textarea
+{
+    height: 60px;
+    resize: none;
+}
+
+
+.project-form .team-member.form .field input,
+.project-form .team-member.form .field select
+{
+    width: inherit;
+    float: left;
+    margin-right: 15px;
+}
+
+.project-form .team-member.form :not(.col-sm-1) .field-label
+{
+    float: inherit;
+    margin-right: 15px;
+}
+
+.project-form .team-member.form .field.account-name input {
+    width: 120px;
+}
+
+.project-form .team-member.form .field.account-type select {
+    width: 80px;
+}
+.project-form .team-member.form .field.role input {
+    width: 235px;
+}
+
+.project-form .team-member.entry .rm-btn.tm-entry {
+    top: 0;
+}
+.project-form .team-member.form .rm-btn.tm-form {
+    top: -3px;
+}
+
+.required {
+    position: absolute;
+    right: 7px;
+}
+
+.project-form .team-member.form .col-sm-11 .required {
+    position: inherit;
+    right: inherit;
+    margin-left: 2px;
+}
+.project-form .team-member.form .required {
+    color: #7e93a0;
+}
+
+ul {
+    padding-left: 0;
+    margin-left: 15px;
+    margin-top: -10px;
+}
+
+.project-form .team-member.entry {
+    line-height: 50px;
+}

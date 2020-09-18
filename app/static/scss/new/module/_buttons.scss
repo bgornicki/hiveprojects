@@ -1,0 +1,142 @@
+@import "../base/variables";
+
+.m-btn {
+  $m-btn: &;
+
+  @extend .btn;
+
+  margin: 19px 0;
+  padding: 0 15px;
+  font-size: 14px;
+  font-weight: normal;
+  text-decoration: none;
+  text-transform: none;
+  border-radius: 20px;
+  line-height: 40px;
+
+  color: $base-font-color;
+  background-color: $m-btn-background-color;
+  border: solid $m-btn-border-width $m-btn-border-color;
+
+  &:hover {
+    color: $m-btn-font-color-hover;
+    background-color: $m-btn-border-color-hover;
+    border-color: $m-btn-border-color-hover;
+  }
+
+  &--inverse {
+    color: $m-btn-font-color-hover;
+    border-color: $m-btn-border-color-hover;
+    background-color: $m-btn-border-color-hover;
+
+    &:hover {
+      color: $base-font-color;
+      border-color: $m-btn-border-color;
+      background-color: $m-btn-background-color;
+
+    }
+  }
+
+  &__icon {
+    position: relative;
+    top: -2px;
+    margin-right: 5px;
+    font-size: 1.2em;
+
+    &--fav {
+      @extend .material-icons;
+
+      &::before {
+        content: 'favorite_border';
+        color: $gen-red;
+      }
+
+      #{$m-btn}:hover & {
+        &::before {
+          color: $m-btn-font-color-hover;
+        }
+      }
+
+      &--is-fav {
+        &::before {
+          content: 'favorite';
+        }
+
+        #{$m-btn}:hover & {
+          &::before {
+            color: $m-btn-font-color-hover;
+          }
+        }
+      }
+    }
+  }
+
+  &--small {
+    height: 30px;
+    border-radius: 15px;
+    line-height: 28px - $m-btn-border-width;
+    padding: 0 10px;
+    margin: 10px 0;
+    font-size: 14px;
+  }
+}
+
+.m-clickable-icon {
+  $m-clickable-icon: &;
+
+  display: block;
+  &__icon {
+    position: relative;
+    top: -2px;
+    margin-right: 5px;
+    font-size: 1.2em;
+
+    &--fav {
+      @extend .material-icons;
+
+      &::before {
+        content: 'favorite_border';
+        color: $base-font-color;
+      }
+
+      &:hover {
+        &::before {
+          color: $gen-red;
+        }
+      }
+
+      &--is-fav {
+        &::before {
+          content: 'favorite';
+          color: $gen-red;
+        }
+
+        &:hover {
+          &::before {
+            color: $base-font-color;
+          }
+        }
+      }
+    }
+
+    &--link {
+      @extend .material-icons;
+
+      &::before {
+        content: 'insert_link';
+        color: $base-link-color;
+      }
+
+      &:hover {
+        &::before {
+          color: $base-font-color;
+        }
+      }
+    }
+
+    &--github {
+      @extend .icon-base;
+      @extend .icon-github;
+    }
+  }
+}

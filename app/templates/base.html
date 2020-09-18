@@ -1,0 +1,217 @@
+{% spaceless %}
+{% load i18n profile_tags static witness_tags %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}" xml:lang="{{ LANGUAGE_CODE }}" lang="{{ LANGUAGE_CODE }}" {% block angular_header %}ng-app{% endblock angular_header %}>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% block angularjs %}
+    <script src="{% static 'angular/angular.min.js' %}"></script>
+    <script src="{% static 'angular/controllers.js' %}?123"></script>
+    {% endblock angularjs %}
+    <title>{% block head_title_base %}{{ SITE_TITLE }} : {% block head_title %}{% endblock %}{% endblock %}</title>
+    {% include "vendor/ga.html" %}
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap-glyphicons.css" type="text/css" />
+
+    <!-- Bootstrap Material Design -->
+    <link rel="stylesheet" href="{{ STATIC_URL }}bower_components/bootstrap-material-design/dist/css/ripples.min.css" type="text/css" />
+
+    <!-- Material Design fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600" type="text/css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- rest -->
+    <link rel="stylesheet" href="{{ STATIC_URL }}components/audreyr-rotatingnav/dist/jquery.rotatingnav.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/main.css?deployment={{ DEPLOYMENT_DATETIME }}" type="text/css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/oc.css?deployment={{ DEPLOYMENT_DATETIME }}" type="text/css" />
+    <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon_{{ FRAMEWORK_NAME|lower }}projects.ico" />
+    {% block extra_head %}{% endblock %}
+</head>
+{% if global_preferences.general__released or request.user.is_superuser %}
+<body class="{% block body_class %}{% endblock %}" ng-controller="SearchCtrl" ng-init="init_search('{{ request.GET.q }}', '{% url 'apiv4:searchv2-list' %}', {{ MAX_WEIGHT }})">
+
+{% block messages %}
+    {% block extra_messages %}{% endblock %}
+    {% for message in messages %}
+        <div class="m-messagebar{% for tag in message.tags.split %} m-messagebar--{{ tag }}{% endfor %}" id="message_{{ forloop.counter }}"
+            {% for tag in message.tags.split %}{% if 'data-' in tag %}{{ tag }}="true" {% endif %}{% endfor %}"
+        >
+            <div class="container">
+                {{ message|safe }} {% if 'data-stick' not in message.tags.split %}<button type="button" class="m-messagebar--close-btn" data-dismiss="message" title="Dismiss">&times;</button>{% endif %}
+            </div>
+        </div>
+    {% endfor %}
+
+
+    {% if projects_to_approve|length > 0 %}
+        <div class="m-messagebar m-messagebar--info" data-stick="true">
+            <div class="container">
+                Projects waiting for approval:
+                {% for project in projects_to_approve %}
+                    <a href="{% url 'package' project.slug %}">{{ project.name }}</a>
+                    {% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    {% if global_preferences.witness__asking_for_votes %}
+        <div class="m-messagebar m-messagebar--wise" data-stick="true">
+            <div class="container">
+                If you voted for <i>@noisy.witness</i>, a team which created this service, please update your witness vote. <i>@noisy.witness</i> has merged with Engrave to form <i>@wise-team</i>. Learn more about us and our projects from <a href="https://steemit.com/steem/@noisy/ann-introduction-of-new-witness-wise-team">our announcement</a>. Vote for <i>@wise-team</i> witness if you want to support us or any of our projects!
+            </div>
+        </div>
+    {% endif %}
+
+{% endblock %}
+
+<div class="header">
+    <div class="container">
+        <nav class="m-navbar">
+            <div class="navbar-header col-sm-12 col-md-3 col-lg-2 col-lg-2-mod">
+                <label for="navbar-toggle-cbox" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="m-navbar--toggle-menu-btn"></span>
+                </label>
+                <label for="navbar-toggle-cbox2" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="m-navbar--toggle-search-btn"></span>
+                </label>
+
+                <a class="navbar-brand" href="{% url 'home' %}">
+                    <div class="m-navbar__brand-image"></div>
+                </a>
+            </div>
+
+            <div class="col-sm-12 col-md-9 col-lg-10 col-lg-10-mod">
+                <input type="checkbox" id="navbar-toggle-cbox">
+                <input type="checkbox" id="navbar-toggle-cbox2">
+                <div id="navbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="m-navbar--item"><a class="m-navbar--item-text" href="{% url 'home' %}">{% trans "Home" %}</a></li>
+                        <li class="m-navbar--item"><a class="m-navbar--item-text"  href="{% url 'faq' %}">{% trans "FAQ" %}</a></li>
+
+                        {% if request.user.is_authenticated %}
+                            <li class="m-navbar--item"><a class="m-navbar--item-text" href="{{ profile.get_absolute_url }}">{{ profile.username }}</a></li>
+
+                            {% if request.user.is_staff %}
+                                <li class="m-navbar--item"><a class="m-navbar--item-text" href="{% url 'admin:index' %}">{% trans "Admin" %}</a></li>
+                            {% endif %}
+
+                            <li class="m-navbar--item"><a class="m-navbar--item-text" href="{% url 'logout' %}">{% trans "Log out" %}</a></li>
+                        {% else %}
+                            <li class="m-navbar--item"><a class="m-navbar--item-text" href="{% url 'login' %}{% if current_path %}?next={{ current_path | safe }}{% endif %}">{% trans "Log in" %}</a></li>
+                        {% endif %}
+
+                        <li class="m-navbar--item hidden-md hidden-lg">
+                            <a class="m-navbar--item-text" href="{% url 'add_package' %}">{% trans "Add project" %}</a>
+                        </li>
+                        <li class="m-navbar--item hidden-xs hidden-sm">
+                            <a class="m-navbar--item-btn" href="{% url 'add_package' %}">{% trans "Add project" %}</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div id="navbar2" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="m-navbar--item">
+                            <form action="{% url 'search' %}"  class="m-navbar--form pull-left">
+                                <input id="search_input"
+                                       type="text"
+                                       name="q"
+                                       class="col-12 m-navbar--form-control"
+                                       ng-model="model.q"
+                                       ng-keyup="search(model, '{% url 'apiv4:searchv2-list' %}')"
+                                       placeholder="Search for projects" autocomplete="off"
+                                >
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>
+
+{% comment %}
+<div id="myrotatingnav" class="rotatingnav slide">
+  <div class="rotatingnav-inner">
+  {% for grid_chunk in grid_headers %}
+    <div class="item">
+      {% for tab in grid_chunk %}
+          {% if tab %}
+              <a href="{% url 'grid' tab.slug %}" title="{{ tab.description }}">{{ tab.title|truncatechars:"17" }}</a><br />
+          {% endif %}
+          {% if forloop.parentloop.last and forloop.last %}
+              <a class="gridnav-name" href="{% url 'grids' %}">{% trans "&raquo; more grids..." %}</a>
+          {% endif %}
+      {% endfor %}
+    </div>
+  {% endfor %}
+
+  <a class="left rotatingnav-control">
+    <span class="icon-prev"></span>
+  </a>
+  <a class="right rotatingnav-control">
+    <span class="icon-next"></span>
+  </a>
+
+  </div>
+</div>
+{% endcomment %}
+
+<div class="container main-container" ng-hide="items">
+    {% block body %}
+    {% endblock %}
+</div>
+<div class="container" ng-show="items">
+  <div class="row">
+    <div class="col-12">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>{% trans "Project" %}</th>
+              <th>{% trans "Description" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+                {% verbatim %}
+                <tr ng-repeat="item in items">
+                  <td>
+                      <a ng-href="{{ item.absolute_url }}">{{ item.title }}</a>
+                  </td>
+                  <td>
+                    <strong ng-if="item.item_type=='grid'">Grid&nbsp;</strong>
+                    <strong ng-if="item.is_draft">Draft&nbsp;</strong>
+                    {{ item.description }}
+                  </td>
+                </tr>
+                {% endverbatim %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+</div>
+
+    {% include "footer.html" %}
+
+    {% block javascript %}
+        <script src="{{ STATIC_URL }}bower_components/jquery/jquery.min.js" type="text/javascript"></script>
+        <script src="{{ STATIC_URL }}components/audreyr-rotatingnav/dist/jquery.rotatingnav.min.js"></script>
+        <script src="{{ STATIC_URL }}components/messagebar.js"></script>
+        <script src="{{ STATIC_URL }}js/jquery.tablesorter.min.js" type="text/javascript"></script>
+        <script src="{{ STATIC_URL }}js/jquery.tools.min.js" type="text/javascript"></script>
+        <script src="{{ STATIC_URL }}js/site.js" type="text/javascript"></script>
+    {% endblock javascript %}
+
+    {% block extra_body %}{% endblock %}
+
+    {{ PIWIK_CODE|safe }}
+</body>
+{% else %} {# else of if global_preferences.general__released #}
+    <body>
+        <img src="{{ STATIC_URL }}img/noreleased_{{ FRAMEWORK_NAME|lower }}.png" style="width: 100%">
+    </body>
+{% endif %}
+</html>
+{% endspaceless %}

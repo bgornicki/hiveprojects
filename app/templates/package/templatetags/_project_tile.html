@@ -1,0 +1,47 @@
+{% load cache %}
+{% load package_tags %}
+<div class="m-project-tile {% if style %}m-project-tile--{{style}}{% endif %}">
+    <a href="{{ package.get_absolute_url }}">
+        {% cache 300 thumbnail package style %}
+            <img class="m-project-tile__thumbnail" src="{% if style == 'gallery' %}{{ package.img|thumb:320 }}{% else %}{{ package.img|thumb:128 }}{% endif %}">
+        {% endcache %}
+        <div class="project-details m-project-tile__details">
+            <h3 class="m-project-tile__project-name">{{ package.name }}</h3>
+            <p class="m-project-tile__description">
+                {% with package.description|truncatewords:20 as short %}
+                    {% if package.description|length > short|length %}
+                        {{ short|slice:"-3" }}...
+                    {% else %}
+                        {{ short }}
+                    {% endif %}
+                {% endwith %}
+            </p>
+        </div>
+    </a>
+
+    <p class="m-project-tile__category">
+        <a href="{% url "category" package.category.slug %}">
+            <span class="m-project-tile__category-icon"></span>{{ package.category }}
+        </a>
+    </p>
+
+    <div class="m-project-tile__links project-links">
+        <div class="project-link-icon m-project-tile__link-icon">
+            {% fav_button 'small' %}
+        </div>
+        <div class="project-link-icon m-project-tile__link-icon">
+            {% if package.repo_url %}
+                <a class="m-clickable-icon" href="{{ package.repo_url }}">
+                    <i class="m-clickable-icon__icon m-clickable-icon__icon--github"></i>
+                </a>
+            {% endif %}
+        </div>
+        <div class="project-link-icon m-project-tile__link-icon">
+            {% if package.url %}
+                <a class="m-clickable-icon" href="{{ package.url }}">
+                    <i class="m-clickable-icon__icon m-clickable-icon__icon--link"></i>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
