@@ -11,8 +11,8 @@ class ProfileForm(forms.ModelForm):
 
     class Meta:
         fields = (
-            # 'steem_account',
-            # 'steemit_chat_account',
+            # 'hive_account',
+            # 'openhive_chat_account',
             # 'github_account',
         )
         model = Profile

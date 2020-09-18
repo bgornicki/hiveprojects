@@ -4,8 +4,8 @@
 import os.path
 from os import environ
 import environ as envmax
-from steem.instance import set_shared_steemd_instance
-from steem.steemd import Steemd
+from hive.instance import set_shared_hived_instance
+from hive.hived import Hived
 
 env = envmax.Env()
 
@@ -229,13 +229,13 @@ GITHUB_APP_ID = environ.get('GITHUB_APP_ID')
 GITHUB_TOKEN = environ.get('GITHUB_TOKEN')
 GITHUB_USERNAME = environ.get('GITHUB_USERNAME')
 
-########## STEEMCONNECT
-STEEMCONNECT_APP_ID = environ.get('STEEMCONNECT_APP_ID')
-STEEMCONNECT_APP_SECRET = environ.get('STEEMCONNECT_APP_SECRET')
+########## HIVESIGNER
+HIVESIGNER_APP_ID = environ.get('HIVESIGNER_APP_ID')
+HIVESIGNER_APP_SECRET = environ.get('HIVESIGNER_APP_SECRET')
 
 ########################## Site specific stuff
-SITE_TITLE = environ.get('SITE_TITLE', 'Steem Projects')
-FRAMEWORK_NAME = environ.get('FRAMEWORK_NAME', 'Steem')
+SITE_TITLE = environ.get('SITE_TITLE', 'Hive Projects')
+FRAMEWORK_NAME = environ.get('FRAMEWORK_NAME', 'Hive')
 
 if LOCAL_INSTALLED_APPS:
     INSTALLED_APPS.extend(LOCAL_INSTALLED_APPS)
@@ -243,7 +243,7 @@ if LOCAL_INSTALLED_APPS:
 SUPPORTED_REPO.extend(["bitbucket", "github"])
 
 SOCIAL_AUTH_AUTHENTICATION_BACKENDS = [
-    'steemconnect.backends.SteemConnectOAuth2',
+    'social_auth_local.hivesigner.HiveSignerOAuth2',
     'social_core.backends.github.GithubOAuth2',
     'social_core.backends.facebook.FacebookOAuth2',
 ]
@@ -264,12 +264,12 @@ SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
 SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
     'fields': 'id, name, email'
 }
-SOCIAL_AUTH_STEEMCONNECT_KEY = STEEMCONNECT_APP_ID
-SOCIAL_AUTH_STEEMCONNECT_SECRET = STEEMCONNECT_APP_SECRET
+SOCIAL_AUTH_HIVESIGNER_KEY = HIVESIGNER_APP_ID
+SOCIAL_AUTH_HIVESIGNER_SECRET = HIVESIGNER_APP_SECRET
 
-SOCIAL_AUTH_STEEMCONNECT_SCOPE = ['login']
+SOCIAL_AUTH_HIVESIGNER_SCOPE = ['login']
 
-SOCIAL_AUTH_ENABLED_BACKENDS = ('github', 'facebook', 'steemconnect')
+SOCIAL_AUTH_ENABLED_BACKENDS = ('github', 'facebook', 'hivesigner')
 SOCIAL_AUTH_COMPLETE_URL_NAME = 'socialauth_complete'
 SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'associate_complete'
 SOCIAL_AUTH_DEFAULT_USERNAME = lambda u: slugify(u)
@@ -332,7 +332,7 @@ SOCIAL_AUTH_PIPELINE = (
 
 SOCIAL_AUTH_EMAIL_VALIDATION_FUNCTION = 'social_auth_local.mail.send_validation'
 SOCIAL_AUTH_EMAIL_VALIDATION_URL = '/auth/email-sent/'
-SOCIAL_AUTH_STEEMCONNECT_FORCE_EMAIL_VALIDATION = True
+SOCIAL_AUTH_HIVESIGNER_FORCE_EMAIL_VALIDATION = True
 VALIDATION_EMAIL_SENDER = environ.get('VALIDATION_EMAIL_SENDER', DEFAULT_FROM_EMAIL)
 
 LOGIN_REDIRECT_URL = '/'
@@ -501,17 +501,17 @@ ROCKET_CHAT_LOGIN = environ.get('ROCKET_CHAT_LOGIN')
 ROCKET_CHAT_PASSWORD = environ.get('ROCKET_CHAT_PASSWORD')
 ROCKET_CHAT_URL = environ.get('ROCKET_CHAT_URL')
 
-STEEM_NODES = [node.strip() for node in environ.get('STEEM_NODES').split(',')]
+HIVE_NODES = [node.strip() for node in environ.get('HIVE_NODES').split(',')]
 
-set_shared_steemd_instance(Steemd(nodes=STEEM_NODES))
+set_shared_hived_instance(Hived(nodes=HIVE_NODES))
 
-STEEM_NODES = [node.strip() for node in environ.get('STEEM_NODES').split(',')]
+HIVE_NODES = [node.strip() for node in environ.get('HIVE_NODES').split(',')]
 
-STEEM_ACCOUNT = environ.get('STEEM_ACCOUNT')
-STEEM_POSTING_KEY = environ.get('STEEM_POSTING_KEY')
+HIVE_ACCOUNT = environ.get('HIVE_ACCOUNT')
+HIVE_POSTING_KEY = environ.get('HIVE_POSTING_KEY')
 
-from steem.wallet import Wallet
-Wallet(keys=[STEEM_POSTING_KEY])
+from hive.wallet import Wallet
+Wallet(keys=[HIVE_POSTING_KEY])
 
 PROJECT_GITHUB_REPOSITORY_URL = environ.get('PROJECT_GITHUB_REPOSITORY_URL')
 if PROJECT_GITHUB_REPOSITORY_URL.endswith("/"):

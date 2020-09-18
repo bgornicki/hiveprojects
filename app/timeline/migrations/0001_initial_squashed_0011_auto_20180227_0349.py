@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
             name='TimelineEventInserterRulebook',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('service_type', models.CharField(choices=[('SteemPostService', 'Steem Post')], max_length=64)),
+                ('service_type', models.CharField(choices=[('HivePostService', 'Hive Post')], max_length=64)),
                 ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='timeline_rulebooks', to='package.Project')),
                 ('last', models.DateTimeField(blank=True, default=None, null=True)),
             ],
@@ -72,12 +72,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='timelineeventinserterrulebook',
             name='service_type',
-            field=models.CharField(choices=[('SteemPostService', 'new post is published on Steem'), ('GithubReleaseService', 'new release is published on Github')], max_length=64),
+            field=models.CharField(choices=[('HivePostService', 'new post is published on Hive'), ('GithubReleaseService', 'new release is published on Github')], max_length=64),
         ),
         migrations.AlterField(
             model_name='timelineeventinserterrule',
             name='type',
-            field=models.CharField(choices=[('SteemAuthorTimelineEventRule', 'Published by'), ('SteemTagTimelineEventRule', 'Has a tag'), ('SteemAfterDatetimeTimelineEventRule', 'Published after'), ('SteemTitleRegexpTimelineEventRule', 'Title regexp'), ('SteemTitlePrefixTimelineEventRule', 'Title prefix')], max_length=64),
+            field=models.CharField(choices=[('HiveAuthorTimelineEventRule', 'Published by'), ('HiveTagTimelineEventRule', 'Has a tag'), ('HiveAfterDatetimeTimelineEventRule', 'Published after'), ('HiveTitleRegexpTimelineEventRule', 'Title regexp'), ('HiveTitlePrefixTimelineEventRule', 'Title prefix')], max_length=64),
         ),
         migrations.AddField(
             model_name='timelineevent',
@@ -92,17 +92,17 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='timelineeventinserterrule',
             name='type',
-            field=models.CharField(choices=[('SteemAuthorTimelineEventRule', 'Published by'), ('SteemTagTimelineEventRule', 'Has a tag'), ('SteemAfterDatetimeTimelineEventRule', 'Published after'), ('SteemTitleRegexpTimelineEventRule', 'Title regexp'), ('SteemTitlePrefixTimelineEventRule', 'Title prefix'), ('GithubRepositoryTimelineEventRule', 'In repository')], max_length=64),
+            field=models.CharField(choices=[('HiveAuthorTimelineEventRule', 'Published by'), ('HiveTagTimelineEventRule', 'Has a tag'), ('HiveAfterDatetimeTimelineEventRule', 'Published after'), ('HiveTitleRegexpTimelineEventRule', 'Title regexp'), ('HiveTitlePrefixTimelineEventRule', 'Title prefix'), ('GithubRepositoryTimelineEventRule', 'In repository')], max_length=64),
         ),
         migrations.AlterField(
             model_name='timelineeventinserterrule',
             name='type',
-            field=models.CharField(choices=[('SteemAuthorTimelineEventRule', 'Published by'), ('SteemTagTimelineEventRule', 'Has a tag'), ('SteemAfterDatetimeTimelineEventRule', 'Published after'), ('SteemTitleRegexpTimelineEventRule', 'Title regexp'), ('SteemTitlePrefixTimelineEventRule', 'Title prefix')], max_length=64),
+            field=models.CharField(choices=[('HiveAuthorTimelineEventRule', 'Published by'), ('HiveTagTimelineEventRule', 'Has a tag'), ('HiveAfterDatetimeTimelineEventRule', 'Published after'), ('HiveTitleRegexpTimelineEventRule', 'Title regexp'), ('HiveTitlePrefixTimelineEventRule', 'Title prefix')], max_length=64),
         ),
         migrations.AlterField(
             model_name='timelineeventinserterrulebook',
             name='service_type',
-            field=models.CharField(choices=[('SteemPostService', 'new post is published on Steem')], max_length=64),
+            field=models.CharField(choices=[('HivePostService', 'new post is published on Hive')], max_length=64),
         ),
         migrations.AddField(
             model_name='timelineeventinserterrulebook',
@@ -112,7 +112,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='timelineeventinserterrule',
             name='type',
-            field=models.CharField(choices=[('SteemAuthorTimelineEventRule', 'Published by'), ('SteemTagTimelineEventRule', 'Has a tag'), ('SteemTitlePrefixTimelineEventRule', 'Title starts with'), ('SteemTitleContainsTimelineEventRule', 'Title contains')], max_length=64),
+            field=models.CharField(choices=[('HiveAuthorTimelineEventRule', 'Published by'), ('HiveTagTimelineEventRule', 'Has a tag'), ('HiveTitlePrefixTimelineEventRule', 'Title starts with'), ('HiveTitleContainsTimelineEventRule', 'Title contains')], max_length=64),
         ),
         migrations.AlterField(
             model_name='timelineeventinserterrulebook',

@@ -36,10 +36,10 @@ def common_context(authentication_backends, user=None, **extra):
                 'data': {'uid': user.profile.github_account.name},
             }
 
-        if user.profile.steem_account:
-            context['associations']['steemconnect'] = {
+        if user.profile.hive_account:
+            context['associations']['hivesigner'] = {
                 'confirmed': False,
-                'data': {'uid': user.profile.steem_account.name},
+                'data': {'uid': user.profile.hive_account.name},
             }
 
         context['associations'].update(dict(

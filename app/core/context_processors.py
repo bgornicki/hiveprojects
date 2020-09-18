@@ -32,7 +32,6 @@ def current_path(request):
     if request.path.strip() != reverse('logout'):
         context['current_path'] = request.path
 
-        # fix for https://github.com/noisy/steemprojects.com/issues/147
         context['current_path'] = escape(context['current_path'])
         context['current_path'] = context['current_path'].replace("{{", "&#123;&#123;").replace("}}", "&#124;&#124;")
     return context

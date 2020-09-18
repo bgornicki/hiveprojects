@@ -12,7 +12,7 @@ RUN pip install setuptools
 RUN pip install scrypt
 RUN pip install wheel
 RUN pip install pytest
-RUN pip install steem
+RUN pip install hivepy
 
 RUN pip install -r /requirements.txt \
     && groupadd -r django \

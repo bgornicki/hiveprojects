@@ -1,11 +1,10 @@
 import json
 from social_core.backends.oauth import BaseOAuth2
 
+class HiveSignerOAuth2(BaseOAuth2):
+    """HiveSigner v2 OAuth authentication backend"""
 
-class SteemConnectOAuth2(BaseOAuth2):
-    """SteemConnect v2 OAuth authentication backend"""
-
-    name = 'steemconnect'
+    name = 'hivesigner'
 
     BASE_URL = 'https://hivesigner.com'
     AUTHORIZATION_URL = BASE_URL + '/oauth2/authorize'
@@ -26,7 +25,7 @@ class SteemConnectOAuth2(BaseOAuth2):
     ]
 
     def get_user_details(self, response):
-        """Return user details from GitHub account"""
+        """Return user details from Hive account"""
 
         account = response['account']
         metadata = json.loads(account.get("json_metadata") or "{}")

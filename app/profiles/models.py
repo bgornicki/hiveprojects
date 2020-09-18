@@ -16,9 +16,9 @@ class Profile(BaseModel):
     verified_by = models.ForeignKey("Profile", blank=True, null=True, default=None, related_name="verifier_of")
 
     def __str__(self):
-        return "id:{}, steem:{}, github:{}".format(
+        return "id:{}, hive:{}, github:{}".format(
             self.user.pk if self.user else '-',
-            self.steem_account.name if self.steem_account else '-',
+            self.hive_account.name if self.hive_account else '-',
             self.github_account.name if self.github_account else '-',
         )
 
@@ -27,8 +27,8 @@ class Profile(BaseModel):
         return self.user.is_staff or self.user.is_superuser or self.verified_by is not None
 
     @property
-    def steem_account(self):
-        return self.account_set.filter(account_type__name=Account.TYPE_STEEM, profile=self).first()
+    def hive_account(self):
+        return self.account_set.filter(account_type__name=Account.TYPE_HIVE, profile=self).first()
 
     @property
     def github_account(self):
@@ -36,8 +36,8 @@ class Profile(BaseModel):
 
     @property
     def username(self):
-        if self.steem_account:
-            return self.steem_account.name
+        if self.hive_account:
+            return self.hive_account.name
         if self.github_account:
             return self.github_account.name
         if self.user and self.user.username:
@@ -85,8 +85,8 @@ class Profile(BaseModel):
         return packages
 
     def get_absolute_url(self):
-        if self.steem_account:
-            return reverse('steem_profile_detail', args=(self.steem_account.name,))
+        if self.hive_account:
+            return reverse('hive_profile_detail', args=(self.hive_account.name,))
         if self.github_account:
             return reverse('github_profile_detail', args=(self.github_account.name,))
         if self.user.username:
@@ -279,7 +279,7 @@ class Account(BaseModel):
     @staticmethod
     def syntize_name(account_type, account_name):
         account_name = account_name.strip().lower()
-        if account_type == 'STEEM':
+        if account_type == 'HIVE':
             if account_name.startswith('@'):
                 account_name = account_name[1:]
 

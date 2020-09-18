@@ -39,44 +39,44 @@ class TimelineEventRule(metaclass=TimelineEventRuleABC):
         return self.__class__.__name__
 
 
-############################# STEEM ##################################
+############################# HIVE ##################################
 
 
-class SteemPostTimelineEventRule(TimelineEventRule):
-    supported_service = 'SteemPostService'
+class HivePostTimelineEventRule(TimelineEventRule):
+    supported_service = 'HivePostService'
 
 
-class SteemAuthorTimelineEventRule(SteemPostTimelineEventRule):
+class HiveAuthorTimelineEventRule(HivePostTimelineEventRule):
     @staticmethod
     def is_valid(post, argument):
         return post.author == argument
 
 
-class SteemTagTimelineEventRule(SteemPostTimelineEventRule):
+class HiveTagTimelineEventRule(HivePostTimelineEventRule):
     @staticmethod
     def is_valid(post, argument):
         return argument in post.tags
 
 #
-# class SteemAfterDatetimeTimelineEventRule(SteemPostTimelineEventRule):
+# class HiveAfterDatetimeTimelineEventRule(HivePostTimelineEventRule):
 #     @staticmethod
 #     def is_valid(post, argument):
 #         return post.date < argument
 #
 #
-# class SteemTitleRegexpTimelineEventRule(SteemPostTimelineEventRule):
+# class HiveTitleRegexpTimelineEventRule(HivePostTimelineEventRule):
 #     @staticmethod
 #     def is_valid(post, argument):
 #         return bool(re.match(argument, post.title))
 
 
-class SteemTitleContainsTimelineEventRule(SteemPostTimelineEventRule):
+class HiveTitleContainsTimelineEventRule(HivePostTimelineEventRule):
     @staticmethod
     def is_valid(post, argument):
         return bool(argument in post.title)
 
 
-class SteemTitlePrefixTimelineEventRule(SteemPostTimelineEventRule):
+class HiveTitlePrefixTimelineEventRule(HivePostTimelineEventRule):
     @staticmethod
     def is_valid(post, argument):
         return post.title.startswith(argument)

@@ -118,3 +118,8 @@ static/scss/new/base/_variables.scss
 
 # Sass cache files
 ../.sass-cache/
+/app/.sass-cache/
+
+app/static/css/
+
+**/.idea

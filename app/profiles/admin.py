@@ -11,7 +11,7 @@ from social_auth_local.templatetags.witness_tags import is_voting_for_witness, g
 class ProfileAdmin(VersionAdmin):
 
     search_fields = ("user__username", "user__email", "email")
-    list_display = ("username", "github_account_name", "steem_account_name", "email")
+    list_display = ("username", "github_account_name", "hive_account_name", "email")
 
     readonly_fields = ('accounts',)
 
@@ -37,10 +37,10 @@ class ProfileAdmin(VersionAdmin):
 
     github_account_name.allow_tags = True
 
-    def steem_account_name(self, obj):
-        return self._print_link_to_account(obj.steem_account, lambda a: a.name) if obj.steem_account else '-'
+    def hive_account_name(self, obj):
+        return self._print_link_to_account(obj.hive_account, lambda a: a.name) if obj.hive_account else '-'
 
-    steem_account_name.allow_tags = True
+    hive_account_name.allow_tags = True
 
 
 class ConnectedFilter(admin.SimpleListFilter):
@@ -80,7 +80,7 @@ class IsVotingForUsFilter(admin.SimpleListFilter):
     def queryset(self, request, queryset):
 
         if self.value() == 'witnesssupporter':
-            accounts = queryset.filter(user_social_auth__isnull=False, account_type__name="STEEM")
+            accounts = queryset.filter(user_social_auth__isnull=False, account_type__name="HIVE")
             accounts_ids = [
                 account.id
                 for account in accounts
@@ -121,7 +121,6 @@ class AccountAdmin(VersionAdmin):
                 search_term.upper().startswith(account_type[0] + ":")
                 for account_type in Account.TYPE_CHOICES
             ]):
-                # if search_term.startswith("steem:") or search_term.startswith("github:"):
                 tokens = search_term.split(":")
                 type_ = tokens[0].upper()
                 name = ":".join(tokens[1:])

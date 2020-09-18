@@ -15,11 +15,11 @@ def load_data(apps, schema_editor):
     )
 
     AccountType.objects.get_or_create(
-        name="STEEM",
-        display_name="Steem",
-        social_auth_provider_name="steemconnect",
-        link_to_account_with_param="https://steemit.com/@{account_name}",
-        link_to_avatar_with_params="https://steemitimages.com/u/{account_name}/avatar"
+        name="HIVE",
+        display_name="Hive",
+        social_auth_provider_name="hivesigner",
+        link_to_account_with_param="https://hive.blog/@{account_name}",
+        link_to_avatar_with_params="https://images.hive.blog/u/{account_name}/avatar"
     )
 
 

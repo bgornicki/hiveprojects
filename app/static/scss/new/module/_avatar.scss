@@ -64,6 +64,10 @@
       @extend .icon-steem;
     }
 
+    &--hive {
+      @extend .icon-hive;
+    }
+
     &--github {
       @extend .icon-github;
     }

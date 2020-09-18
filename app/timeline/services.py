@@ -1,8 +1,8 @@
 from time import sleep
 from abc import ABCMeta, abstractmethod
 from textwrap import dedent
-from steem.blog import Blog
-from steembase.exceptions import RPCError
+from hive.blog import Blog
+from hivebase.exceptions import RPCError
 
 from profiles.models import AccountType
 from timeline.forms import TimelineEventForm
@@ -53,14 +53,14 @@ class RulebookService(metaclass=RulebookServiceABC):
         pass
 
 
-class SteemPostService(RulebookService):
-    DEFAULT_STEEM_INTERFACE = 'https://steemit.com'
+class HivePostService(RulebookService):
+    DEFAULT_HIVE_INTERFACE = 'https://hive.blog'
 
     @staticmethod
     def post_to_event(post, project):
         form = TimelineEventForm(data={
             "name": post.title,
-            "url": "{}{}".format(SteemPostService.DEFAULT_STEEM_INTERFACE, post.url),
+            "url": "{}{}".format(HivePostService.DEFAULT_HIVE_INTERFACE, post.url),
             "date": post.created,
             "project": project.id,
         })
@@ -74,7 +74,7 @@ class SteemPostService(RulebookService):
 
     def get_new_events(self):
         try:
-            author_rule = self.rulebook.rules.get(type=TimelineEventInserterRule.STEEM_AUTHOR_RULE)
+            author_rule = self.rulebook.rules.get(type=TimelineEventInserterRule.HIVE_AUTHOR_RULE)
         except TimelineEventInserterRule.DoesNotExist:
             return []
 
@@ -123,22 +123,22 @@ class SteemPostService(RulebookService):
         resposnse = None
 
         try:
-            resposnse = post.reply(msg, "", settings.STEEM_ACCOUNT)
+            resposnse = post.reply(msg, "", settings.HIVE_ACCOUNT)
         except RPCError as e:
-            raise Exception("Steem Notify Service Exception:\n\n{}\n\n{}".format(str(e), str(resposnse)))
+            raise Exception("Hive Notify Service Exception:\n\n{}\n\n{}".format(str(e), str(resposnse)))
 
     @staticmethod
     def fetch_source(project):
-        steem_account_type = AccountType.objects.get(name="STEEM")
+        hive_account_type = AccountType.objects.get(name="HIVE")
         return [
             (account.name, account.name)
-            for account in project.team_members.filter(account_type=steem_account_type)
+            for account in project.team_members.filter(account_type=hive_account_type)
         ]
 
     @staticmethod
     def get_required_rule_types():
         return [
-            TimelineEventInserterRule.STEEM_AUTHOR_RULE,
+            TimelineEventInserterRule.HIVE_AUTHOR_RULE,
         ]
 
     @staticmethod
@@ -152,7 +152,7 @@ class SteemPostService(RulebookService):
                 site_title=settings.SITE_TITLE,
                 project_name=escape(project.name),
                 project_page=settings.SITE_URL + reverse('package', kwargs={'slug': project.slug}),
-                ga_campaign="?utm_source=comment_timeline&utm_medium=steem&utm_campaign=new_event&utm_content=c1",
+                ga_campaign="?utm_source=comment_timeline&utm_medium=hive&utm_campaign=new_event&utm_content=c1",
             )
         )
 

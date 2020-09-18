@@ -37,14 +37,14 @@ class TimelineEvent(BaseModel):
 
 class TimelineEventInserterRulebook(models.Model):
 
-    STEEM_POST_SERVICE = "SteemPostService"
+    HIVE_POST_SERVICE = "HivePostService"
     # GITHUB_RELEASE_SERVICE = "GithubReleaseService"
 
     SERVICE_TYPES = [
         (
-            STEEM_POST_SERVICE,
+            HIVE_POST_SERVICE,
             # Insert new event, every time when:
-            "new post is published on Steem"
+            "new post is published on Hive"
         ),
         # (
         #     GITHUB_RELEASE_SERVICE,
@@ -77,12 +77,12 @@ class TimelineEventInserterRulebook(models.Model):
 
 class TimelineEventInserterRule(models.Model):
 
-    STEEM_AUTHOR_RULE = "SteemAuthorTimelineEventRule"
-    STEEM_TAG_RULE = "SteemTagTimelineEventRule"
-    # STEEM_AFTER_RULE = "SteemAfterDatetimeTimelineEventRule"
-    # STEEM_TITLE_REGEXP_RULE = "SteemTitleRegexpTimelineEventRule"
-    STEEM_TITLE_PREFIX_RULE = "SteemTitlePrefixTimelineEventRule"
-    STEEM_TITLE_CONTAINS_RULE = "SteemTitleContainsTimelineEventRule"
+    HIVE_AUTHOR_RULE = "HiveAuthorTimelineEventRule"
+    HIVE_TAG_RULE = "HiveTagTimelineEventRule"
+    # HIVE_AFTER_RULE = "HiveAfterDatetimeTimelineEventRule"
+    # HIVE_TITLE_REGEXP_RULE = "HiveTitleRegexpTimelineEventRule"
+    HIVE_TITLE_PREFIX_RULE = "HiveTitlePrefixTimelineEventRule"
+    HIVE_TITLE_CONTAINS_RULE = "HiveTitleContainsTimelineEventRule"
 
     # GITHUB_REPOSITORY_URL = "GithubRepositoryTimelineEventRule"
     # GITHUB_NEW_MAJOR_RELEASE = "GithubNewMajorReleaseTimelineEventRule"
@@ -90,13 +90,13 @@ class TimelineEventInserterRule(models.Model):
     # GITHUB_NEW_MAJOR_MINOR_OR_PATCH_RELEASE = "GithubNewMajorMinorOrPatchReleaseTimelineEventRule"
 
     RULE_TYPES_PER_SERVICE = {
-        TimelineEventInserterRulebook.STEEM_POST_SERVICE: [
-            (STEEM_AUTHOR_RULE, "Published by"),
-            (STEEM_TAG_RULE, "Has a tag"),
-            # (STEEM_AFTER_RULE, "Published after"),
-            # (STEEM_TITLE_REGEXP_RULE, "Title regexp"),
-            (STEEM_TITLE_PREFIX_RULE, "Title starts with"),
-            (STEEM_TITLE_CONTAINS_RULE, "Title contains"),
+        TimelineEventInserterRulebook.HIVE_POST_SERVICE: [
+            (HIVE_AUTHOR_RULE, "Published by"),
+            (HIVE_TAG_RULE, "Has a tag"),
+            # (HIVE_AFTER_RULE, "Published after"),
+            # (HIVE_TITLE_REGEXP_RULE, "Title regexp"),
+            (HIVE_TITLE_PREFIX_RULE, "Title starts with"),
+            (HIVE_TITLE_CONTAINS_RULE, "Title contains"),
         ],
         # TimelineEventInserterRulebook.GITHUB_RELEASE_SERVICE: [
         #     (GITHUB_REPOSITORY_URL, "In repository"),

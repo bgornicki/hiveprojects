@@ -30,13 +30,13 @@ class PackageForm(ModelForm):
         super(PackageForm, self).__init__(*args, **kwargs)
         self.fields['category'].help_text = package_help_text()
         self.fields['repo_url'].widget = TextInput(attrs={
-            'placeholder': 'ex: https://github.com/steemit/steem'
+            'placeholder': 'ex: https://github.com/engrave/hiveprojects'
         })
         self.fields['description'].widget = Textarea(attrs={
             "placeholder": "Write few sentences about this projects. What problem does it solve? Who is it for?"
         })
         self.fields['contact_url'].widget = TextInput(attrs={
-            "placeholder": "Link to channel on steemit.chat, discord, slack, etc"
+            "placeholder": "Link to channel on openhive.chat, discord, slack, etc"
         })
 
     def save(self):
@@ -83,7 +83,7 @@ class DocumentationForm(ModelForm):
 
 ACCOUNT_TYPE_CHOICES = (
     ('', '----'),
-    ('STEEM', 'Steem'),
+    ('HIVE', 'Hive'),
     ('GITHUB', 'Github'),
 )
 

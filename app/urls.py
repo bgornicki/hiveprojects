@@ -32,7 +32,7 @@ urlpatterns = [
     url(r"^health_check/$", health_check_view, name="health_check"),
     url(settings.ADMIN_URL_BASE, include(admin.site.urls)),
     url(r"^profiles/", include("profiles.urls")),
-    url(r"^@(?P<steem_account>[-\.\w]+)", lambda request, steem_account: redirect('steem_profile_detail', steem_account, permanent=True)),
+    url(r"^@(?P<hive_account>[-\.\w]+)", lambda request, hive_account: redirect('hive_profile_detail', hive_account, permanent=True)),
     url(r"^projects/", include("package.urls")),
     url(r"^grids/", include("grid.urls")),
     url(r"^feeds/", include("feeds.urls")),
@@ -54,7 +54,7 @@ urlpatterns = [
         StaticPageView.as_view(
             template_name='pages/contribute.html',
             context={
-                "membership_in_steemprojects": TeamMembership.objects.filter(project__name="Steem Projects"),
+                "membership_in_hiveprojects": TeamMembership.objects.filter(project__name="Hive Projects"),
             },
         ),
 

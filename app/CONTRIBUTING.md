@@ -4,7 +4,7 @@ We love pull requests from everyone.
 
 First fork, then clone your repository:
 
-    git clone git@github.com:your-username/steemprojects.com.git && cd steemprojects.com
+    git clone git@gitlab.com:engrave/hiveprojects.git && cd hiveprojects.io
 
 Get familiar with content of `.env.example` file, then copy it into `.env.local`:
 

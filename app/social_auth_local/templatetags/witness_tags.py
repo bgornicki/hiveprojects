@@ -6,7 +6,7 @@ register = template.Library()
 def get_witnesses(user):
     if hasattr(user, 'social_auth'):
 
-        socials = user.social_auth.filter(provider="steemconnect")
+        socials = user.social_auth.filter(provider="hivesigner")
 
         if all([
             "account" in social.extra_data
@@ -19,7 +19,7 @@ def get_witnesses(user):
             ]):
                 return [
                     witness
-                    for social in user.social_auth.filter(provider="steemconnect")
+                    for social in user.social_auth.filter(provider="hivesigner")
                     for witness in social.extra_data['account']['witness_votes']
                 ]
 
@@ -30,7 +30,7 @@ def get_witnesses(user):
 
                 return [
                     witness
-                    for social in user.social_auth.filter(provider="steemconnect")
+                    for social in user.social_auth.filter(provider="hivesigner")
                     for account in social.extra_data['account']
                     for witness in account['witness_votes']
                 ]
@@ -53,7 +53,7 @@ def is_voting_for_us(user):
 def get_proxies(user):
     if hasattr(user, 'social_auth'):
 
-        socials = user.social_auth.filter(provider="steemconnect")
+        socials = user.social_auth.filter(provider="hivesigner")
 
         if all([
             "account" in social.extra_data
@@ -66,7 +66,7 @@ def get_proxies(user):
             ]):
                 return [
                     social.extra_data['account']['proxy']
-                    for social in user.social_auth.filter(provider="steemconnect")
+                    for social in user.social_auth.filter(provider="hivesigner")
                     if social.extra_data['account']['proxy'] != ""
                 ]
 
@@ -76,7 +76,7 @@ def get_proxies(user):
             ]):
                 return [
                     account['proxy']
-                    for social in user.social_auth.filter(provider="steemconnect")
+                    for social in user.social_auth.filter(provider="hivesigner")
                     for account in social.extra_data['account']
                     if account['proxy'] != ""
                 ]

@@ -1,5 +1,5 @@
 from django.core.urlresolvers import reverse
-from social.apps.django_app.middleware import SocialAuthExceptionMiddleware
+from social_django.middleware import SocialAuthExceptionMiddleware
 from django.shortcuts import redirect
 
 from social_auth_local.exceptions import AuthCanceled__RedirectToLogin

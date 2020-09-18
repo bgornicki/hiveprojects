@@ -16,13 +16,13 @@ from social_core.backends.utils import load_backends
 from social_auth_local.utils import common_context
 
 
-def profile_detail(request, template_name="profiles/profile.html", github_account=None, steem_account=None, id=None):
+def profile_detail(request, template_name="profiles/profile.html", github_account=None, hive_account=None, id=None):
     account = None
     if github_account:
         account = get_object_or_404(Account, account_type__name=Account.TYPE_GITHUB, name=github_account)
         profile = account.profile
-    elif steem_account:
-        account = get_object_or_404(Account, account_type__name=Account.TYPE_STEEM, name=steem_account)
+    elif hive_account:
+        account = get_object_or_404(Account, account_type__name=Account.TYPE_HIVE, name=hive_account)
         profile = account.profile
     else:
         user = get_object_or_404(User, pk=id)
