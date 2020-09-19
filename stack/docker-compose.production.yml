@@ -2,7 +2,7 @@ version: "3.7"
 services:
 
   app:
-    image: registry.gitlab.com/engrave/hiveprojects/develop:latest
+    image: registry.gitlab.com/engrave/hiveprojects/production:latest
     command: /start.sh
     volumes:
       - ../app:/app
@@ -10,13 +10,13 @@ services:
       - static:/data/static
     environment:
       - SITE_URL=https://staging.hiveprojects.io
-      - SECRET_KEY=${STAGING_SECRET_KEY}
-      - DJANGO_SETTINGS_MODULE=settings.staging
+      - SECRET_KEY=${PRODUCTION_SECRET_KEY}
+      - DJANGO_SETTINGS_MODULE=settings.production
       - SITE_TITLE=Hive Projects
       - FRAMEWORK_NAME=hive
-      - POSTGRES_USER=${STAGING_DB_USER}
-      - POSTGRES_PASSWORD=${STAGING_DB_PASSWORD}
-      - POSTGRES_DB=${STAGING_DB_DATABASE}
+      - POSTGRES_USER=${PRODUCTION_DB_USER}
+      - POSTGRES_PASSWORD=${PRODUCTION_DB_PASSWORD}
+      - POSTGRES_DB=${PRODUCTION_DB_DATABASE}
       - HIVESIGNER_APP_ID=${HIVESIGNER_APP_ID}
       - HIVESIGNER_APP_SECRET=${HIVESIGNER_APP_SECRET}
       - DJANGO_MAILGUN_API_KEY=${MAILGUN_API_KEY}
@@ -53,8 +53,8 @@ services:
   postgres:
     image: postgres
     environment:
-      - POSTGRES_PASSWORD=${STAGING_DB_PASSWORD}
-      - POSTGRES_USER=${STAGING_DB_USER}
+      - POSTGRES_PASSWORD=${PRODUCTION_DB_PASSWORD}
+      - POSTGRES_USER=${PRODUCTION_DB_USER}
     volumes:
       - db_postgres:/var/lib/postgresql/data
 

@@ -13,37 +13,52 @@ variables:
 build:
   stage: build
   only:
-    - master
+    - develop
+    - production
   before_script:
     - echo $CI_JOB_TOKEN | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin
   script:
-    - docker build -f app/Dockerfile app -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA -t $CI_REGISTRY_IMAGE:latest
-    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
-    - docker push $CI_REGISTRY_IMAGE:latest
+    - docker build -f app/Dockerfile app -t $CI_REGISTRY_IMAGE/CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA -t $CI_REGISTRY_IMAGE/CI_COMMIT_REF_NAME:latest
+    - docker push $CI_REGISTRY_IMAGE/CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA
+    - docker push $CI_REGISTRY_IMAGE/CI_COMMIT_REF_NAME:latest
   after_script:
     - docker images
 
-deploy-stack:
+.deploy: &deploy
   stage: deploy
   when: manual
-
-  environment:
-    name: production
-    url: https://hiveprojects.io
 
   before_script:
     - mkdir -p ~/.docker
     - echo "$CORE_SWARM_TLSCACERT" > ~/.docker/ca.pem
     - echo "$CORE_SWARM_TLSCERT" > ~/.docker/cert.pem
     - echo "$CORE_SWARM_TLSKEY" > ~/.docker/key.pem
-
-    # Login to gitlab docker registry
     - echo $CORE_DEPLOY_TOKEN_KEY | docker -H $CORE_SWARM_HOST --tlsverify login -u $CORE_DEPLOY_TOKEN_NAME $CI_REGISTRY --password-stdin
-
     # Pull all necessary images before deploy
-    - cat stack/docker-compose.staging.yml | grep -oE 'image:([ a-zA-Z0-9\:\/\.-]*)' | sed "s~image:~~g" | while read -r image ; do docker -H $CORE_SWARM_HOST --tlsverify pull $image; done
+    - cat ${STACK_FILE} | grep -oE 'image:([ a-zA-Z0-9\:\/\.-]*)' | sed "s~image:~~g" | while read -r image ; do docker -H $CORE_SWARM_HOST --tlsverify pull $image; done
 
   script:
-    - docker -H $CORE_SWARM_HOST --tlsverify stack deploy -c stack/docker-compose.staging.yml --with-registry-auth ${STACK_NAME}-staging
+    - docker -H $CORE_SWARM_HOST --tlsverify stack deploy -c ${STACK_FILE} --with-registry-auth ${STACK_NAME}-${STACK_ENV}
+
+deploy-staging:
+  variables:
+    STACK_FILE: stack/docker-compose.staging.yml
+    STACK_ENV: staging
+  environment:
+    name: staging
+    url: https://staging.hiveprojects.io
   only:
-    - master
+    - develop
+  <<: *deploy
+
+deploy-production:
+  variables:
+    STACK_FILE: stack/docker-compose.production.yml
+    STACK_ENV: production
+  environment:
+    name: production
+    url: https://hiveprojects.io
+  only:
+    - production
+  <<: *deploy
+
