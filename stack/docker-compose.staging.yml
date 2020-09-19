@@ -31,6 +31,8 @@ services:
       - GITHUB_API_SECRET=${GITHUB_API_SECRET}
       - GITHUB_APP_ID=${GITHUB_APP_ID}
       - GITHUB_USERNAME=${GITHUB_USERNAME}
+    networks:
+      - app
 
   nginx:
     image: nginx:alpine
@@ -40,11 +42,15 @@ services:
     volumes:
       - media:/data/media
       - static:/data/static
-
+    networks:
+      - app
+      - infrastructure
   redis:
     image: redis
     volumes:
       - db_redis:/data
+    networks:
+      - app
 
   postgres:
     image: postgres
@@ -53,7 +59,8 @@ services:
       - POSTGRES_USER=${STAGING_DB_USER}
     volumes:
       - db_postgres:/var/lib/postgresql/data
-
+    networks:
+      - app
 volumes:
   db_redis:
   db_postgres:
@@ -64,3 +71,8 @@ configs:
   NGINX_CONFIG:
     file: ./nginx/hiveprojects.conf
     name: NGINX_CONFIG-${CI_COMMIT_SHA}
+
+networks:
+  app:
+  infrastructure:
+    external: true
