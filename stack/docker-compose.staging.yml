@@ -5,7 +5,6 @@ services:
     image: registry.gitlab.com/engrave/hiveprojects/develop:latest
     command: /start.sh
     volumes:
-      - ../app:/app
       - media:/data/media
       - static:/data/static
     environment:
