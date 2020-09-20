@@ -8,11 +8,16 @@ services:
       - media:/data/media
       - static:/data/static
     environment:
-      - SITE_URL=https://staging.hiveprojects.io
-      - SECRET_KEY=${PRODUCTION_SECRET_KEY}
-      - DJANGO_SETTINGS_MODULE=settings.production
       - SITE_TITLE=Hive Projects
-      - FRAMEWORK_NAME=hive
+      - SITE_URL=https://hiveprojects.io
+      - FRAMEWORK_NAME=Hive
+      - HIVE_NODES=https://api.hive.blog
+      - PROJECT_GITHUB_REPOSITORY_URL=https://gitlab.com/engrave/hiveprojects
+      - PROJECT_SLUG_ON_PAGE=hiveprojects
+      - DJANGO_SETTINGS_MODULE=settings.production
+      - DEFAULT_FROM_EMAIL=Hive Projects <noreply@hiveprojects.io>
+      - SERVER_EMAIL=Hive Projects <info@hiveprojects.io>
+      - SECRET_KEY=${PRODUCTION_SECRET_KEY}
       - POSTGRES_USER=${PRODUCTION_DB_USER}
       - POSTGRES_PASSWORD=${PRODUCTION_DB_PASSWORD}
       - POSTGRES_DB=${PRODUCTION_DB_DATABASE}
@@ -20,25 +25,17 @@ services:
       - HIVESIGNER_APP_SECRET=${HIVESIGNER_APP_SECRET}
       - DJANGO_MAILGUN_API_KEY=${MAILGUN_API_KEY}
       - MAILGUN_SENDER_DOMAIN=${MAILGUN_SENDER_DOMAIN}
-      - DEFAULT_FROM_EMAIL=Hive Projects <noreply@hiveprojects.io>
-      - SERVER_EMAIL=Hive Projects <info@hiveprojects.io>
       - DJANGO_SENTRY_DSN=${SENTRY_DSN}
-      - HIVE_NODES=https://api.hive.blog
-      - PROJECT_GITHUB_REPOSITORY_URL=https://gitlab.com/engrave/hiveprojects
-      - PROJECT_SLUG_ON_PAGE=hiveprojects
       - HIVE_ACCOUNT=${HIVE_USERNAME}
       - HIVE_POSTING_KEY=${HIVE_POSTING_KEY}
-      - GITHUB_API_SECRET=${GITHUB_API_SECRET}
-      - GITHUB_APP_ID=${GITHUB_APP_ID}
-      - GITHUB_USERNAME=${GITHUB_USERNAME}
+      - GITHUB_API_SECRET=${PRODUCTION_GITHUB_API_SECRET}
+      - GITHUB_APP_ID=${PRODUCTION_GITHUB_APP_ID}
+      - GITHUB_USERNAME=${PRODUCTION_GITHUB_USERNAME}
     networks:
       - app
 
   nginx:
     image: nginx:alpine
-    ports:
-      - "80:80"
-      - "443:443"
     configs:
       - source: NGINX_CONFIG
         target: /etc/nginx/conf.d/hiveprojects.conf
@@ -74,7 +71,7 @@ volumes:
 
 configs:
   NGINX_CONFIG:
-    file: ./nginx/hiveprojects.conf
+    file: ./nginx/production.conf
     name: NGINX_CONFIG-${CI_COMMIT_SHA}
 
 networks:
