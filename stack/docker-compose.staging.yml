@@ -8,11 +8,16 @@ services:
       - media:/data/media
       - static:/data/static
     environment:
-      - SITE_URL=https://staging.hiveprojects.io
-      - SECRET_KEY=${STAGING_SECRET_KEY}
-      - DJANGO_SETTINGS_MODULE=settings.staging
       - SITE_TITLE=Hive Projects
-      - FRAMEWORK_NAME=hive
+      - SITE_URL=https://staging.hiveprojects.io
+      - FRAMEWORK_NAME=Hive
+      - PROJECT_GITHUB_REPOSITORY_URL=https://gitlab.com/engrave/hiveprojects
+      - DJANGO_SETTINGS_MODULE=settings.staging
+      - DEFAULT_FROM_EMAIL=Hive Projects <noreply@hiveprojects.io>
+      - SERVER_EMAIL=Hive Projects <info@hiveprojects.io>
+      - PROJECT_SLUG_ON_PAGE=hiveprojects
+      - HIVE_NODES=https://api.hive.blog
+      - SECRET_KEY=${STAGING_SECRET_KEY}
       - POSTGRES_USER=${STAGING_DB_USER}
       - POSTGRES_PASSWORD=${STAGING_DB_PASSWORD}
       - POSTGRES_DB=${STAGING_DB_DATABASE}
@@ -20,17 +25,12 @@ services:
       - HIVESIGNER_APP_SECRET=${HIVESIGNER_APP_SECRET}
       - DJANGO_MAILGUN_API_KEY=${MAILGUN_API_KEY}
       - MAILGUN_SENDER_DOMAIN=${MAILGUN_SENDER_DOMAIN}
-      - DEFAULT_FROM_EMAIL=Hive Projects <noreply@hiveprojects.io>
-      - SERVER_EMAIL=Hive Projects <info@hiveprojects.io>
       - DJANGO_SENTRY_DSN=${SENTRY_DSN}
-      - HIVE_NODES=https://api.hive.blog
-      - PROJECT_GITHUB_REPOSITORY_URL=https://gitlab.com/engrave/hiveprojects
-      - PROJECT_SLUG_ON_PAGE=hiveprojects
       - HIVE_ACCOUNT=${HIVE_USERNAME}
       - HIVE_POSTING_KEY=${HIVE_POSTING_KEY}
-      - GITHUB_API_SECRET=${GITHUB_API_SECRET}
-      - GITHUB_APP_ID=${GITHUB_APP_ID}
-      - GITHUB_USERNAME=${GITHUB_USERNAME}
+      - GITHUB_API_SECRET=${STAGING_GITHUB_API_SECRET}
+      - GITHUB_APP_ID=${STAGING_GITHUB_APP_ID}
+      - GITHUB_USERNAME=${STAGING_GITHUB_USERNAME}
     networks:
       - app
 
@@ -69,7 +69,7 @@ volumes:
 
 configs:
   NGINX_CONFIG:
-    file: ./nginx/hiveprojects.conf
+    file: ./nginx/staging.conf
     name: NGINX_CONFIG-${CI_COMMIT_SHA}
 
 networks:
