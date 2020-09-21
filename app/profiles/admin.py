@@ -84,7 +84,7 @@ class IsVotingForUsFilter(admin.SimpleListFilter):
             accounts_ids = [
                 account.id
                 for account in accounts
-                if is_voting_for_witness(account.profile.user, "noisy.witness")
+                if is_voting_for_witness(account.profile.user, "engrave")
             ]
 
             return queryset.filter(id__in=accounts_ids)
@@ -137,7 +137,7 @@ class AccountAdmin(VersionAdmin):
     last_login.short_description = 'Last login'
 
     def is_voting_for_us(self, obj):
-        return obj.profile and is_voting_for_witness(obj.profile.user, "noisy.witness")
+        return obj.profile and is_voting_for_witness(obj.profile.user, "engrave")
 
     is_voting_for_us.boolean = True
 

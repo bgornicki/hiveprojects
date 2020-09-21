@@ -23,7 +23,7 @@ INTERNAL_IPS = [
 ]
 
 ADMINS = [
-    ("Krzysztof Szumny", "noisy.pl@gmail.com"),
+    ("Bartłomiej Górnicki", "bgor91@gmail.com"),
 ]
 
 MANAGERS = ADMINS
