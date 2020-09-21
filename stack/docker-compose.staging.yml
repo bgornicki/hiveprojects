@@ -10,6 +10,12 @@ services:
     volumes:
       - media:/data/media
       - static:/data/static
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health_check"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     networks:
       - app
 
