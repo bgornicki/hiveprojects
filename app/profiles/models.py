@@ -285,21 +285,21 @@ class Account(BaseModel):
 
     @property
     def avatar_small(self):
-        if not self.account_type_id == Account.TYPE_GITLAB:
+        if self.account_type_id == 3:
             return get_gitlab_avatar(self.name, 30)
         else:
             return self.account_type.link_to_avatar_with_params.format(account_name=self.name, size=30)
 
     @property
     def avatar_medium(self):
-        if not self.account_type_id == Account.TYPE_GITLAB:
+        if self.account_type_id == 3:
             return get_gitlab_avatar(self.name, 45)
         else:
             return self.account_type.link_to_avatar_with_params.format(account_name=self.name, size=45)
 
     @property
     def avatar_big(self):
-        if not self.account_type_id == Account.TYPE_GITLAB:
+        if self.account_type_id == 3:
             return get_gitlab_avatar(self.name, 150)
         else:
             return self.account_type.link_to_avatar_with_params.format(account_name=self.name, size=150)
