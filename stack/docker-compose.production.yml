@@ -34,6 +34,36 @@ services:
     networks:
       - app
 
+  cron:
+    image: registry.gitlab.com/engrave/hiveprojects/production:latest
+    command: /configure_and_run_cron.sh
+    environment:
+      - SITE_TITLE=Hive Projects
+      - SITE_URL=https://hiveprojects.io
+      - FRAMEWORK_NAME=Hive
+      - HIVE_NODES=https://api.hive.blog
+      - PROJECT_GITHUB_REPOSITORY_URL=https://gitlab.com/engrave/hiveprojects
+      - PROJECT_SLUG_ON_PAGE=hiveprojects
+      - DJANGO_SETTINGS_MODULE=settings.production
+      - DEFAULT_FROM_EMAIL=Hive Projects <noreply@hiveprojects.io>
+      - SERVER_EMAIL=Hive Projects <info@hiveprojects.io>
+      - SECRET_KEY=${PRODUCTION_SECRET_KEY}
+      - POSTGRES_USER=${PRODUCTION_DB_USER}
+      - POSTGRES_PASSWORD=${PRODUCTION_DB_PASSWORD}
+      - POSTGRES_DB=${PRODUCTION_DB_DATABASE}
+      - HIVESIGNER_APP_ID=${HIVESIGNER_APP_ID}
+      - HIVESIGNER_APP_SECRET=${HIVESIGNER_APP_SECRET}
+      - DJANGO_MAILGUN_API_KEY=${MAILGUN_API_KEY}
+      - MAILGUN_SENDER_DOMAIN=${MAILGUN_SENDER_DOMAIN}
+      - DJANGO_SENTRY_DSN=${SENTRY_DSN}
+      - HIVE_ACCOUNT=${HIVE_USERNAME}
+      - HIVE_POSTING_KEY=${HIVE_POSTING_KEY}
+      - GITHUB_API_SECRET=${PRODUCTION_GITHUB_API_SECRET}
+      - GITHUB_APP_ID=${PRODUCTION_GITHUB_APP_ID}
+      - GITHUB_USERNAME=${PRODUCTION_GITHUB_USERNAME}
+    networks:
+      - app
+
   nginx:
     image: nginx:alpine
     configs:
