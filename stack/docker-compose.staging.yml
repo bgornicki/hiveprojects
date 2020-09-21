@@ -19,6 +19,9 @@ services:
     command: /configure_and_run_cron.sh
     env_file:
       - ${STAGING_ENV_CONFIG}
+    configs:
+      - source: ENV_CONFIG
+        target: /app/.env
     networks:
       - app
 
@@ -59,6 +62,9 @@ configs:
   NGINX_CONFIG:
     file: ./nginx/staging.conf
     name: NGINX_CONFIG-${CI_COMMIT_SHA}
+  ENV_CONFIG:
+    file: ${STAGING_ENV_CONFIG}
+    name: ENV_CONFIG-${CI_COMMIT_SHA}
 networks:
   app:
   infrastructure:
