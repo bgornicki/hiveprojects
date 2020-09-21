@@ -45,13 +45,13 @@ services:
 
   postgres:
     image: postgres
-    environment:
-      - POSTGRES_PASSWORD=${STAGING_DB_PASSWORD}
-      - POSTGRES_USER=${STAGING_DB_USER}
+    env_file:
+      - ${STAGING_ENV_CONFIG}
     volumes:
       - db_postgres:/var/lib/postgresql/data
     networks:
       - app
+
 volumes:
   db_redis:
   db_postgres:
@@ -65,6 +65,7 @@ configs:
   ENV_CONFIG:
     file: ${STAGING_ENV_CONFIG}
     name: ENV_CONFIG-${CI_COMMIT_SHA}
+
 networks:
   app:
   infrastructure:
