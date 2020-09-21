@@ -9,6 +9,8 @@ RUN pip install setuptools scrypt wheel pytest hivepy
 
 RUN gem install sass
 
+RUN sed -i '/imklog/s/^/#/' /etc/rsyslog.conf
+
 WORKDIR /app
 
 RUN groupadd -r django && useradd -m -r -g django django
