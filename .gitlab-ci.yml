@@ -18,7 +18,11 @@ build:
   before_script:
     - echo $CI_JOB_TOKEN | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin
   script:
-    - docker build -f app/Dockerfile app -t $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA -t $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:latest
+    - docker build
+      -f app/Dockerfile app
+      -t $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA
+      -t $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:latest
+      --cache-from $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:latest
     - docker push $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA
     - docker push $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:latest
   after_script:
@@ -36,6 +40,7 @@ build:
     - docker -H $CORE_SWARM_HOST --tlsverify pull $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA
   script:
     - docker -H $CORE_SWARM_HOST --tlsverify service update --image $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA --update-failure-action rollback --update-order start-first ${STACK_NAME}-${STACK_ENV}_app
+    - docker -H $CORE_SWARM_HOST --tlsverify service update --image $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA --update-failure-action rollback --update-order start-first ${STACK_NAME}-${STACK_ENV}_cron
 
 .deploy: &deploy
   stage: deploy
