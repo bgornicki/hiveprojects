@@ -39,3 +39,8 @@ Hive Projects was created to gather information about all projects created for a
         * Latest updates from favorite projects
         * New projects
         * Security Updates
+
+# How to develop
+
+1. Copy `app/.env.example` to `app/.env` and edit it.
+2. Run `./run.development.sh` and wait.
