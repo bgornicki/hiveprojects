@@ -62,7 +62,6 @@ class GitHubHandler(BaseHandler):
         return package
 
     def fetch_commits(self, package):
-
         self.manage_ratelimit()
         repo = self._get_repo(package)
         if repo is None:

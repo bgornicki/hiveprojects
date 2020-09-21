@@ -229,6 +229,12 @@ GITHUB_APP_ID = environ.get('GITHUB_APP_ID')
 GITHUB_TOKEN = environ.get('GITHUB_TOKEN')
 GITHUB_USERNAME = environ.get('GITHUB_USERNAME')
 
+########## GITLAB
+GITLAB_API_SECRET = environ.get('GITLAB_API_SECRET')
+GITLAB_APP_ID = environ.get('GITLAB_APP_ID')
+GITLAB_TOKEN = environ.get('GITLAB_TOKEN')
+GITLAB_USERNAME = environ.get('GITLAB_USERNAME')
+
 ########## HIVESIGNER
 HIVESIGNER_APP_ID = environ.get('HIVESIGNER_APP_ID')
 HIVESIGNER_APP_SECRET = environ.get('HIVESIGNER_APP_SECRET')
@@ -240,10 +246,11 @@ FRAMEWORK_NAME = environ.get('FRAMEWORK_NAME', 'Hive')
 if LOCAL_INSTALLED_APPS:
     INSTALLED_APPS.extend(LOCAL_INSTALLED_APPS)
 
-SUPPORTED_REPO.extend(["bitbucket", "github"])
+SUPPORTED_REPO.extend(["bitbucket", "github", "gitlab"])
 
 SOCIAL_AUTH_AUTHENTICATION_BACKENDS = [
     'social_auth_local.hivesigner.HiveSignerOAuth2',
+    'social_auth_local.gitlab.GitlabOAuth2',
     'social_core.backends.github.GithubOAuth2',
     'social_core.backends.facebook.FacebookOAuth2',
 ]
@@ -269,7 +276,11 @@ SOCIAL_AUTH_HIVESIGNER_SECRET = HIVESIGNER_APP_SECRET
 
 SOCIAL_AUTH_HIVESIGNER_SCOPE = ['login']
 
-SOCIAL_AUTH_ENABLED_BACKENDS = ('github', 'facebook', 'hivesigner')
+SOCIAL_AUTH_GITLAB_KEY = GITLAB_APP_ID
+SOCIAL_AUTH_GITLAB_SECRET = GITLAB_API_SECRET
+SOCIAL_AUTH_GITLAB_SCOPE = ['read_user']
+
+SOCIAL_AUTH_ENABLED_BACKENDS = ('github', 'gitlab', 'facebook', 'hivesigner')
 SOCIAL_AUTH_COMPLETE_URL_NAME = 'socialauth_complete'
 SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'associate_complete'
 SOCIAL_AUTH_DEFAULT_USERNAME = lambda u: slugify(u)

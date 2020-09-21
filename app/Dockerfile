@@ -40,6 +40,11 @@ RUN sed -i 's/\r//' /start.sh \
     && chmod +x /start.sh \
     && chown django /start.sh
 
+COPY compose/django/start-dev.sh /start-dev.sh
+RUN sed -i 's/\r//' /start-dev.sh \
+    && chmod +x /start-dev.sh \
+    && chown django /start-dev.sh
+
 COPY compose/django/configure_and_run_cron.sh /configure_and_run_cron.sh
 RUN chmod +x /configure_and_run_cron.sh \
     && chown django /configure_and_run_cron.sh
