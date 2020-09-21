@@ -71,5 +71,9 @@
     &--github {
       @extend .icon-github;
     }
+
+    &--gitlab {
+      @extend .icon-gitlab;
+    }
   }
 }

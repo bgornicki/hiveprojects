@@ -156,7 +156,7 @@
             </h3>
             {% if package.repo_url %}
             <div class="m-repo-section">
-                {% if repo.title == "Github" %}
+                {% if repo.title == "Github" or repo.title == "Gitlab" %}
                     <div class="m-repo-section__column m-repo-section__column--first">
                         <a class="m-repo-section__link" href="{{ package.repo_url }}" target="_blank" rel="noopener noreferrer">
                             <i class="m-repo-section__icon icon-github"></i>
