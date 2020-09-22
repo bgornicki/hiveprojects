@@ -2,7 +2,7 @@ version: "3.7"
 services:
 
   app:
-    image: registry.gitlab.com/engrave/hiveprojects/develop:latest
+    image: registry.gitlab.com/engrave/hiveprojects/production:latest
     command: /start.sh
     hostname: app
     env_file:
@@ -20,7 +20,7 @@ services:
       - app
 
   cron:
-    image: registry.gitlab.com/engrave/hiveprojects/develop:latest
+    image: registry.gitlab.com/engrave/hiveprojects/production:latest
     hostname: cron
     command: /configure_and_run_cron.sh
     env_file:
