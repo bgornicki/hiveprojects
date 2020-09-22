@@ -4,58 +4,25 @@ services:
   app:
     build:
       context: ../app
-    command: /start.sh
+    command: /start-dev.sh
     volumes:
       - ../app:/app
       - media:/data/media
       - static:/data/static
-    environment:
-      - SITE_URL=https://hiveprojects.io
-      - SECRET_KEY=some-random-stuff-usually
-      - DJANGO_SETTINGS_MODULE=settings.docker-local
-      - SITE_TITLE=Hive Projects
-      - FRAMEWORK_NAME=hive
-      - POSTGRES_USER=hiveprojects
-      - POSTGRES_PASSWORD=hiveprojects
-      - POSTGRES_DB=hiveprojects
-      - HIVESIGNER_APP_ID=
-      - HIVESIGNER_APP_SECRET=
-      - DJANGO_MAILGUN_API_KEY=
-      - MAILGUN_SENDER_DOMAIN=
-      - DEFAULT_FROM_EMAIL=Hive Projects <noreply@hiveprojects.io>
-      - SERVER_EMAIL=Hive Projects <info@hiveprojects.io>
-      - DJANGO_SENTRY_DSN=
-      - HIVE_NODES=https://api.hive.blog
-      - PROJECT_GITHUB_REPOSITORY_URL=https://gitlab.com/engrave/hiveprojects
-      - PROJECT_SLUG_ON_PAGE=hiveprojects
-      - HIVE_ACCOUNT=
-      - HIVE_POSTING_KEY=
-      - GITHUB_API_SECRET=
-      - GITHUB_APP_ID=
-      - GITHUB_USERNAME=
-
-  nginx:
-    image: nginx:alpine
+    env_file:
+      - ../app/.env
     ports:
-      - "80:80"
-    volumes:
-      - media:/data/media
-      - static:/data/static
-      - ./nginx:/etc/nginx/conf.d
+      - "8000:8000"
 
   redis:
-    image: redis
-#    logging:
-#      driver: none
+    image: redis:6.0.8
     volumes:
     - db_redis:/data
 
   postgres:
-    image: postgres
+    image: postgres:12.4
     ports:
       - "5432:5432"
-#    logging:
-#      driver: none
     environment:
       - POSTGRES_PASSWORD=hiveprojects
       - POSTGRES_USER=hiveprojects

@@ -17,12 +17,31 @@ build:
     - production
   before_script:
     - echo $CI_JOB_TOKEN | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin
+    - docker pull $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:latest
   script:
-    - docker build -f app/Dockerfile app -t $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA -t $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:latest
+    - docker build
+      -f app/Dockerfile app
+      -t $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA
+      -t $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:latest
+      --cache-from $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:latest
     - docker push $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA
     - docker push $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:latest
   after_script:
     - docker images
+
+.update: &update
+  stage: deploy
+
+  before_script:
+    - mkdir -p ~/.docker
+    - echo "$CORE_SWARM_TLSCACERT" > ~/.docker/ca.pem
+    - echo "$CORE_SWARM_TLSCERT" > ~/.docker/cert.pem
+    - echo "$CORE_SWARM_TLSKEY" > ~/.docker/key.pem
+    - echo $CORE_DEPLOY_TOKEN_KEY | docker -H $CORE_SWARM_HOST --tlsverify login -u $CORE_DEPLOY_TOKEN_NAME $CI_REGISTRY --password-stdin
+    - docker -H $CORE_SWARM_HOST --tlsverify pull $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA
+  script:
+    - docker -H $CORE_SWARM_HOST --tlsverify service update --image $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA --update-failure-action rollback --update-order start-first ${STACK_NAME}-${STACK_ENV}_app
+    - docker -H $CORE_SWARM_HOST --tlsverify service update --image $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA --update-failure-action rollback --update-order start-first ${STACK_NAME}-${STACK_ENV}_cron
 
 .deploy: &deploy
   stage: deploy
@@ -40,7 +59,28 @@ build:
   script:
     - docker -H $CORE_SWARM_HOST --tlsverify stack deploy -c ${STACK_FILE} --with-registry-auth ${STACK_NAME}-${STACK_ENV}
 
-deploy-staging:
+
+update-staging:
+  variables:
+    STACK_ENV: staging
+  environment:
+    name: staging
+    url: https://staging.hiveprojects.io
+  only:
+    - develop
+  <<: *update
+
+update-production:
+  variables:
+    STACK_ENV: production
+  environment:
+    name: production
+    url: https://hiveprojects.io
+  only:
+    - production
+  <<: *update
+
+deploy-staging-stack:
   variables:
     STACK_FILE: stack/docker-compose.staging.yml
     STACK_ENV: staging
@@ -51,7 +91,7 @@ deploy-staging:
     - develop
   <<: *deploy
 
-deploy-production:
+deploy-production-stack:
   variables:
     STACK_FILE: stack/docker-compose.production.yml
     STACK_ENV: production

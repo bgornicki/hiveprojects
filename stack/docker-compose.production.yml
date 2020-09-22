@@ -2,35 +2,32 @@ version: "3.7"
 services:
 
   app:
-    image: registry.gitlab.com/engrave/hiveprojects/production:latest
-    command: /start.sh
-    volumes:
-      - media:/data/media
-      - static:/data/static
-    environment:
-      - SITE_TITLE=Hive Projects
-      - SITE_URL=https://hiveprojects.io
-      - FRAMEWORK_NAME=Hive
-      - HIVE_NODES=https://api.hive.blog
-      - PROJECT_GITHUB_REPOSITORY_URL=https://gitlab.com/engrave/hiveprojects
-      - PROJECT_SLUG_ON_PAGE=hiveprojects
-      - DJANGO_SETTINGS_MODULE=settings.production
-      - DEFAULT_FROM_EMAIL=Hive Projects <noreply@hiveprojects.io>
-      - SERVER_EMAIL=Hive Projects <info@hiveprojects.io>
-      - SECRET_KEY=${PRODUCTION_SECRET_KEY}
-      - POSTGRES_USER=${PRODUCTION_DB_USER}
-      - POSTGRES_PASSWORD=${PRODUCTION_DB_PASSWORD}
-      - POSTGRES_DB=${PRODUCTION_DB_DATABASE}
-      - HIVESIGNER_APP_ID=${HIVESIGNER_APP_ID}
-      - HIVESIGNER_APP_SECRET=${HIVESIGNER_APP_SECRET}
-      - DJANGO_MAILGUN_API_KEY=${MAILGUN_API_KEY}
-      - MAILGUN_SENDER_DOMAIN=${MAILGUN_SENDER_DOMAIN}
-      - DJANGO_SENTRY_DSN=${SENTRY_DSN}
-      - HIVE_ACCOUNT=${HIVE_USERNAME}
-      - HIVE_POSTING_KEY=${HIVE_POSTING_KEY}
-      - GITHUB_API_SECRET=${PRODUCTION_GITHUB_API_SECRET}
-      - GITHUB_APP_ID=${PRODUCTION_GITHUB_APP_ID}
-      - GITHUB_USERNAME=${PRODUCTION_GITHUB_USERNAME}
+    image: registry.gitlab.com/engrave/hiveprojects/develop:latest
+      command: /start.sh
+      hostname: app
+      env_file:
+        - ${PRODUCTION_ENV_CONFIG}
+      volumes:
+        - media:/data/media
+        - static:/data/static
+      healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:5000/health_check"]
+        interval: 1m
+        timeout: 10s
+        retries: 3
+        start_period: 30s
+      networks:
+        - app
+
+  cron:
+    image: registry.gitlab.com/engrave/hiveprojects/develop:latest
+    hostname: cron
+    command: /configure_and_run_cron.sh
+    env_file:
+      - ${PRODUCTION_ENV_CONFIG}
+    configs:
+      - source: ENV_CONFIG
+        target: /app/.env
     networks:
       - app
 
@@ -47,19 +44,33 @@ services:
       - infrastructure
 
   redis:
-    image: redis
+    image: redis:6.0.8
     volumes:
       - db_redis:/data
     networks:
       - app
 
   postgres:
-    image: postgres
-    environment:
-      - POSTGRES_PASSWORD=${PRODUCTION_DB_PASSWORD}
-      - POSTGRES_USER=${PRODUCTION_DB_USER}
+    image: postgres:12.4
+    env_file:
+      - ${PRODUCTION_ENV_CONFIG}
     volumes:
       - db_postgres:/var/lib/postgresql/data
+    networks:
+      - app
+
+  pgbackup:
+    image: registry.gitlab.com/engrave/postgres-backup-s3:12.4
+    env_file:
+      - ${PRODUCTION_ENV_CONFIG}
+    environment:
+      SCHEDULE: '@daily'
+      S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID}
+      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY}
+      S3_BUCKET: ${S3_BUCKET}
+      S3_PREFIX: hiveprojects/production
+      POSTGRES_EXTRA_OPTS: '--schema=public --blobs'
+      POSTGRES_HOST: postgres
     networks:
       - app
 
@@ -73,6 +84,9 @@ configs:
   NGINX_CONFIG:
     file: ./nginx/production.conf
     name: NGINX_CONFIG-${CI_COMMIT_SHA}
+  ENV_CONFIG:
+    file: ${PRODUCTION_ENV_CONFIG}
+    name: ENV_CONFIG-${CI_COMMIT_SHA}
 
 networks:
   app:

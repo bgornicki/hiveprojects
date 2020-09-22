@@ -85,6 +85,7 @@ ACCOUNT_TYPE_CHOICES = (
     ('', '----'),
     ('HIVE', 'Hive'),
     ('GITHUB', 'Github'),
+    ('GITLAB', 'Gitlab'),
 )
 
 

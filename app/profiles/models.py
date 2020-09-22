@@ -1,3 +1,4 @@
+import requests
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.cache import cache
@@ -5,10 +6,8 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from social_django.models import UserSocialAuth
-
 from core.models import BaseModel
 from profiles.accounts import get_account_handler
-
 
 class Profile(BaseModel):
     user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, blank=True)
@@ -16,10 +15,11 @@ class Profile(BaseModel):
     verified_by = models.ForeignKey("Profile", blank=True, null=True, default=None, related_name="verifier_of")
 
     def __str__(self):
-        return "id:{}, hive:{}, github:{}".format(
+        return "id:{}, hive:{}, github:{}, gitlab:{}".format(
             self.user.pk if self.user else '-',
             self.hive_account.name if self.hive_account else '-',
             self.github_account.name if self.github_account else '-',
+            self.gitlab_account.name if self.gitlab_account else '-',
         )
 
     @property
@@ -35,11 +35,17 @@ class Profile(BaseModel):
         return self.account_set.filter(account_type__name=Account.TYPE_GITHUB, profile=self).first()
 
     @property
+    def gitlab_account(self):
+        return self.account_set.filter(account_type__name=Account.TYPE_GITLAB, profile=self).first()
+
+    @property
     def username(self):
         if self.hive_account:
             return self.hive_account.name
         if self.github_account:
             return self.github_account.name
+        if self.gitlab_account:
+            return self.gitlab_account.name
         if self.user and self.user.username:
             return self.user.username
         else:
@@ -64,6 +70,7 @@ class Profile(BaseModel):
         """
         url_mapping = {
             'Github': self.github_account.name if self.github_account else '',
+            'Gitlab': self.gitlab_account.name if self.gitlab_account else '',
             # 'BitBucket': self.bitbucket_url,
             # 'Google Code': self.google_code_url
         }
@@ -89,6 +96,8 @@ class Profile(BaseModel):
             return reverse('hive_profile_detail', args=(self.hive_account.name,))
         if self.github_account:
             return reverse('github_profile_detail', args=(self.github_account.name,))
+        if self.gitlab_account:
+            return reverse('gitlab_profile_detail', args=(self.gitlab_account.name,))
         if self.user.username:
             return reverse('id_profile_detail', args=(self.user.pk,))
 
@@ -204,6 +213,9 @@ class AccountTypesQuerySet(models.QuerySet):
     def github_users(self):
         return self.filter(account_type__name=Account.TYPE_GITHUB)
 
+    def gitlab_users(self):
+        return self.filter(account_type__name=Account.TYPE_GITLAB)
+
 
 class AccountTypesManager(models.Manager):
     def get_queryset(self):
@@ -218,16 +230,23 @@ class AccountTypesManager(models.Manager):
     def github_users(self):
         return self.get_queryset().github_users()
 
+    def gitlab_users(self):
+        return self.get_queryset().gitlab_users()
+
 
 class Account(BaseModel):
     TYPE_HIVE = "HIVE"
     TYPE_STEEM = "STEEM"
     TYPE_GITHUB = "GITHUB"
+    TYPE_GITLAB = "GITLAB"
+    TYPE_FACEBOOK = 'FACEBOOK'
 
     TYPE_CHOICES = (
         (TYPE_HIVE, 'Hive'),
         (TYPE_STEEM, 'Steem'),
         (TYPE_GITHUB, 'Github'),
+        (TYPE_GITLAB, 'Gitlab'),
+        (TYPE_FACEBOOK, 'Facebook'),
     )
 
     profile = models.ForeignKey(Profile, null=True, blank=True)
@@ -266,15 +285,24 @@ class Account(BaseModel):
 
     @property
     def avatar_small(self):
-        return self.account_type.link_to_avatar_with_params.format(account_name=self.name, size=30)
+        if self.account_type_id == 3:
+            return get_gitlab_avatar(self.name, 30)
+        else:
+            return self.account_type.link_to_avatar_with_params.format(account_name=self.name, size=30)
 
     @property
     def avatar_medium(self):
-        return self.account_type.link_to_avatar_with_params.format(account_name=self.name, size=45)
+        if self.account_type_id == 3:
+            return get_gitlab_avatar(self.name, 45)
+        else:
+            return self.account_type.link_to_avatar_with_params.format(account_name=self.name, size=45)
 
     @property
     def avatar_big(self):
-        return self.account_type.link_to_avatar_with_params.format(account_name=self.name, size=150)
+        if self.account_type_id == 3:
+            return get_gitlab_avatar(self.name, 150)
+        else:
+            return self.account_type.link_to_avatar_with_params.format(account_name=self.name, size=150)
 
     @staticmethod
     def syntize_name(account_type, account_name):
@@ -291,7 +319,6 @@ class Account(BaseModel):
         account = handler.get_account(account_name)
         return bool(account)
 
-
 class AccountType(BaseModel):
     name = models.CharField(max_length=40)
     display_name = models.CharField(max_length=40)
@@ -301,3 +328,10 @@ class AccountType(BaseModel):
 
     def __str__(self):
         return self.display_name
+
+
+def get_gitlab_avatar(username, size):
+    r = requests.get(url = 'https://gitlab.com/api/v4/users?username=' + username )
+    data = r.json()
+    avatar = data[0]['avatar_url']
+    return avatar.replace('s=80', 's=' + str(size))
