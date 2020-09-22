@@ -31,25 +31,25 @@ RUN pip install -r /requirements.txt
 COPY . /app
 RUN chown -R django /app
 
-COPY compose/django/entrypoint.sh /entrypoint.sh
+COPY bin/entrypoint.sh /entrypoint.sh
 RUN sed -i 's/\r//' /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-COPY compose/django/start.sh /start.sh
+COPY bin/start.sh /start.sh
 RUN sed -i 's/\r//' /start.sh \
     && chmod +x /start.sh \
     && chown django /start.sh
 
-COPY compose/django/start-dev.sh /start-dev.sh
+COPY bin/start-dev.sh /start-dev.sh
 RUN sed -i 's/\r//' /start-dev.sh \
     && chmod +x /start-dev.sh \
     && chown django /start-dev.sh
 
-COPY compose/django/configure_and_run_cron.sh /configure_and_run_cron.sh
+COPY bin/configure_and_run_cron.sh /configure_and_run_cron.sh
 RUN chmod +x /configure_and_run_cron.sh \
     && chown django /configure_and_run_cron.sh
 
-COPY compose/django/cron.sh /cron.sh
+COPY bin/cron.sh /cron.sh
 RUN chmod +x /cron.sh \
     && chown django /cron.sh
 
