@@ -3,21 +3,21 @@ services:
 
   app:
     image: registry.gitlab.com/engrave/hiveprojects/develop:latest
-      command: /start.sh
-      hostname: app
-      env_file:
-        - ${PRODUCTION_ENV_CONFIG}
-      volumes:
-        - media:/data/media
-        - static:/data/static
-      healthcheck:
-        test: ["CMD", "curl", "-f", "http://localhost:5000/health_check"]
-        interval: 1m
-        timeout: 10s
-        retries: 3
-        start_period: 30s
-      networks:
-        - app
+    command: /start.sh
+    hostname: app
+    env_file:
+      - ${PRODUCTION_ENV_CONFIG}
+    volumes:
+      - media:/data/media
+      - static:/data/static
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health_check"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    networks:
+      - app
 
   cron:
     image: registry.gitlab.com/engrave/hiveprojects/develop:latest
