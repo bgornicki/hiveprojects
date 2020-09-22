@@ -71,6 +71,8 @@ services:
       S3_PREFIX: hiveprojects/staging
       POSTGRES_EXTRA_OPTS: '--schema=public --blobs'
       POSTGRES_HOST: postgres
+    networks:
+      - app
 
 volumes:
   db_redis:
