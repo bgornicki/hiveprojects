@@ -68,11 +68,23 @@ services:
       S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID}
       S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY}
       S3_BUCKET: ${S3_BUCKET}
-      S3_PREFIX: hiveprojects/production
+      S3_PREFIX: hiveprojects/production/database
       POSTGRES_EXTRA_OPTS: '--schema=public --blobs'
       POSTGRES_HOST: postgres
     networks:
       - app
+
+  files-backup:
+    image: registry.gitlab.com/engrave/directory-backup-s3:latest
+    volumes:
+      - media:/data/media
+    environment:
+      SCHEDULE: '@daily'
+      S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID}
+      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY}
+      S3_BUCKET: ${S3_BUCKET}
+      S3_PREFIX: hiveprojects/production/files
+      SOURCE_PATH: /data/media
 
 volumes:
   db_redis:
