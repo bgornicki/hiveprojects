@@ -43,4 +43,4 @@ Hive Projects was created to gather information about all projects created for a
 # How to develop
 
 1. Copy `app/.env.example` to `app/.env` and edit it.
-2. Run `./run.development.sh` and wait.
+2. Run `./run.development.sh` wait for stack to start and visit http://localhost:8000
