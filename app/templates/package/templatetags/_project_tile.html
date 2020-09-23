@@ -31,14 +31,14 @@
         </div>
         <div class="project-link-icon m-project-tile__link-icon">
             {% if package.repo_url %}
-                <a class="m-clickable-icon" href="{{ package.repo_url }}">
+                <a class="m-clickable-icon" href="{{ package.repo_url }}" target="_blank" rel="noopener noreferrer">
                     <i class="m-clickable-icon__icon m-clickable-icon__icon--github"></i>
                 </a>
             {% endif %}
         </div>
         <div class="project-link-icon m-project-tile__link-icon">
             {% if package.url %}
-                <a class="m-clickable-icon" href="{{ package.url }}">
+                <a class="m-clickable-icon" href="{{ package.url }}" target="_blank" rel="noopener noreferrer">
                     <i class="m-clickable-icon__icon m-clickable-icon__icon--link"></i>
                 </a>
             {% endif %}
