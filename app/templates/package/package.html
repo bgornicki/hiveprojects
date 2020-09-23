@@ -67,7 +67,7 @@
         {% if package.announcement_post %}
             <div class="announcement">
                 <h3>Announcement</h3>
-                <p><a href="{{ package.announcement_post }}">{{ package.announcement_post|truncatechars:"60" }}</a></p>
+                <p><a href="{{ package.announcement_post }}" target="_blank" rel="noopener noreferrer">{{ package.announcement_post|truncatechars:"60" }}</a></p>
             </div>
         {% endif %}
         {% if package.contact_url %}
