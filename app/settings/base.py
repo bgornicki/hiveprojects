@@ -516,10 +516,12 @@ HIVE_NODES = [node.strip() for node in environ.get('HIVE_NODES').split(',')]
 
 set_shared_hived_instance(Hived(nodes=HIVE_NODES))
 
-HIVE_NODES = [node.strip() for node in environ.get('HIVE_NODES').split(',')]
-
 HIVE_ACCOUNT = environ.get('HIVE_ACCOUNT')
 HIVE_POSTING_KEY = environ.get('HIVE_POSTING_KEY')
+
+UPDATE_POST_TAGS = [node.strip() for node in environ.get('UPDATE_POST_TAGS').split(',')]
+UPDATE_POST_BENEFICIARY = environ.get('UPDATE_POST_BENEFICIARY')
+UPDATE_POST_BENEFICIARY_WEIGHT = environ.get('UPDATE_POST_BENEFICIARY_WEIGHT')
 
 from hive.wallet import Wallet
 Wallet(keys=[HIVE_POSTING_KEY])
