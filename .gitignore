@@ -123,3 +123,4 @@ static/scss/new/base/_variables.scss
 app/static/css/
 
 **/.idea
+/venv/

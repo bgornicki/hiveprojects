@@ -52,8 +52,9 @@ class GitHubHandler(BaseHandler):
         github_account_type = AccountType.objects.get(name="GITHUB")
         for contributor in repo.iter_contributors():
             account_name = Account.syntize_name(account_type='GITHUB', account_name=contributor.login)
-            account, created = Account.objects.get_or_create(account_type=github_account_type, name=account_name)
-            contributors.append(account)
+            if '[bot]' not in account_name:
+                account, created = Account.objects.get_or_create(account_type=github_account_type, name=account_name)
+                contributors.append(account)
             self.manage_ratelimit()
 
         package.contributors.set(contributors)
