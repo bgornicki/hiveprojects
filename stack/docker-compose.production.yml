@@ -36,6 +36,8 @@ services:
     configs:
       - source: NGINX_CONFIG
         target: /etc/nginx/conf.d/hiveprojects.conf
+      - source: MAINTENANCE_PAGE
+        target: /var/www/maintenance/maintenance.html
     volumes:
       - media:/data/media
       - static:/data/static
@@ -96,6 +98,9 @@ configs:
   NGINX_CONFIG:
     file: ./nginx/production.conf
     name: NGINX_CONFIG-${CI_COMMIT_SHA}
+  MAINTENANCE_PAGE:
+    file: ./nginx/maintenance/maintenance.html
+    name: MAINTENANCE_PAGE-${CI_COMMIT_SHA}
   ENV_CONFIG:
     file: ${PRODUCTION_ENV_CONFIG}
     name: ENV_CONFIG-${CI_COMMIT_SHA}

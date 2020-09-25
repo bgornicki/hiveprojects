@@ -5,6 +5,7 @@ services:
     build:
       context: ../app
     command: /start-dev.sh
+    hostname: app
     volumes:
       - ../app:/app
       - media:/data/media
@@ -14,10 +15,20 @@ services:
     ports:
       - "8000:8000"
 
+  cron:
+    build:
+      context: ../app
+    command: /configure_and_run_cron.sh
+    hostname: cron
+    volumes:
+      - ../app:/app
+    env_file:
+      - ../app/.env
+
   redis:
     image: redis:6.0.8
     volumes:
-    - db_redis:/data
+      - db_redis:/data
 
   postgres:
     image: postgres:12.4
