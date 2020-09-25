@@ -9,6 +9,7 @@ services:
 
 variables:
   STACK_NAME: hiveprojects
+  CERTS: ~/.docker
 
 build:
   stage: build
@@ -33,31 +34,31 @@ build:
   stage: deploy
 
   before_script:
-    - mkdir -p ~/.docker
-    - echo "$CORE_SWARM_TLSCACERT" > ~/.docker/ca.pem
-    - echo "$CORE_SWARM_TLSCERT" > ~/.docker/cert.pem
-    - echo "$CORE_SWARM_TLSKEY" > ~/.docker/key.pem
-    - echo $CORE_DEPLOY_TOKEN_KEY | docker -H $CORE_SWARM_HOST --tlsverify login -u $CORE_DEPLOY_TOKEN_NAME $CI_REGISTRY --password-stdin
-    - docker -H $CORE_SWARM_HOST --tlsverify pull $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA
+    - mkdir -p $CERTS/
+    - echo "$CORE_SWARM_TLSCACERT" > $CERTS/ca.pem
+    - echo "$CORE_SWARM_TLSCERT" > $CERTS/cert.pem
+    - echo "$CORE_SWARM_TLSKEY" > $CERTS/key.pem
+    - echo $CORE_DEPLOY_TOKEN_KEY | DOCKER_CERT_PATH=$CERTS docker -H $CORE_SWARM_HOST --tlsverify login -u $CORE_DEPLOY_TOKEN_NAME $CI_REGISTRY --password-stdin
+    - DOCKER_CERT_PATH=$CERTS docker -H $CORE_SWARM_HOST --tlsverify pull $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA
   script:
-    - docker -H $CORE_SWARM_HOST --tlsverify service update --image $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA --update-failure-action rollback --update-order start-first ${STACK_NAME}-${STACK_ENV}_app
-    - docker -H $CORE_SWARM_HOST --tlsverify service update --image $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA --update-failure-action rollback --update-order start-first ${STACK_NAME}-${STACK_ENV}_cron
+    - DOCKER_CERT_PATH=$CERTS docker -H $CORE_SWARM_HOST --tlsverify service update --image $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA --update-failure-action rollback --update-order start-first ${STACK_NAME}-${STACK_ENV}_app
+    - DOCKER_CERT_PATH=$CERTS docker -H $CORE_SWARM_HOST --tlsverify service update --image $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA --update-failure-action rollback --update-order start-first ${STACK_NAME}-${STACK_ENV}_cron
 
 .deploy: &deploy
   stage: deploy
   when: manual
 
   before_script:
-    - mkdir -p ~/.docker
-    - echo "$CORE_SWARM_TLSCACERT" > ~/.docker/ca.pem
-    - echo "$CORE_SWARM_TLSCERT" > ~/.docker/cert.pem
-    - echo "$CORE_SWARM_TLSKEY" > ~/.docker/key.pem
-    - echo $CORE_DEPLOY_TOKEN_KEY | docker -H $CORE_SWARM_HOST --tlsverify login -u $CORE_DEPLOY_TOKEN_NAME $CI_REGISTRY --password-stdin
+    - mkdir -p $CERTS/
+    - echo "$CORE_SWARM_TLSCACERT" > $CERTS/ca.pem
+    - echo "$CORE_SWARM_TLSCERT" > $CERTS/cert.pem
+    - echo "$CORE_SWARM_TLSKEY" > $CERTS/key.pem
+    - echo $CORE_DEPLOY_TOKEN_KEY | DOCKER_CERT_PATH=$CERTS docker -H $CORE_SWARM_HOST --tlsverify login -u $CORE_DEPLOY_TOKEN_NAME $CI_REGISTRY --password-stdin
     # Pull all necessary images before deploy
-    - cat ${STACK_FILE} | grep -oE 'image:([ a-zA-Z0-9\:\/\.-]*)' | sed "s~image:~~g" | while read -r image ; do docker -H $CORE_SWARM_HOST --tlsverify pull $image; done
+    - cat ${STACK_FILE} | grep -oE 'image:([ a-zA-Z0-9\:\/\.-]*)' | sed "s~image:~~g" | while read -r image ; do DOCKER_CERT_PATH=$CERTS docker -H $CORE_SWARM_HOST --tlsverify pull $image; done
 
   script:
-    - docker -H $CORE_SWARM_HOST --tlsverify stack deploy -c ${STACK_FILE} --with-registry-auth ${STACK_NAME}-${STACK_ENV}
+    - DOCKER_CERT_PATH=$CERTS docker -H $CORE_SWARM_HOST --tlsverify stack deploy -c ${STACK_FILE} --with-registry-auth ${STACK_NAME}-${STACK_ENV}
 
 
 update-staging:
