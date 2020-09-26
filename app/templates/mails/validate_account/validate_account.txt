@@ -1,0 +1,3 @@
+Thanks for signing up!
+
+Validate your account: {{ validation_url }}
