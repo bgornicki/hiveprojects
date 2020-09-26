@@ -143,6 +143,7 @@ PROJECT_APPS = [
     "im",
     "timeline",
     "update_post",
+    'newsletter',
 ]
 
 PREREQ_APPS = [
@@ -314,6 +315,9 @@ SOCIAL_AUTH_PIPELINE = (
 
     # CUSTOM PIPELINE
     'social_auth_local.pipeline.require_email',
+
+    # CUSTOM PIPELINE
+    'social_auth_local.pipeline.ask_for_newsletter',
 
     # Make up a username for this person, appends a random string at the end if
     # there's any collision.
