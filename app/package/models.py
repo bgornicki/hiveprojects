@@ -24,6 +24,7 @@ from package.repos import get_repo_for_repo_url
 from package.signals import signal_fetch_latest_metadata
 from package.utils import get_version, get_pypi_version, normalize_license
 from profiles.models import Profile, Account
+from simple_history.models import HistoricalRecords
 
 repo_url_help_text = settings.PACKAGINATOR_HELP_TEXT['REPO_URL']
 pypi_url_help_text = settings.PACKAGINATOR_HELP_TEXT['PYPI_URL']
@@ -160,8 +161,11 @@ class Project(BaseModel):
     last_fetched = models.DateTimeField(blank=True, null=True, default=timezone.now)
     documentation_url = models.URLField(_("Documentation URL"), blank=True, null=True, default="")
 
+
     commit_list = models.TextField(_("Commit List"), blank=True)
     main_img = models.ForeignKey('ProjectImage', null=True, blank=True, related_name='main_img_proj')
+
+    history = HistoricalRecords()
 
     objects = ProjectQuerySet.as_manager()
 

@@ -81,6 +81,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'dj_pagination.middleware.PaginationMiddleware',
+    'simple_history.middleware.HistoryRequestMiddleware',
     'social_auth_local.middleware.SocialAuthLocalExceptionMiddleware',
 ]
 
@@ -168,6 +169,7 @@ PREREQ_APPS = [
     'rest_framework',
     'chroniker',
     'dynamic_preferences',
+    'simple_history',
 ]
 
 INSTALLED_APPS = PREREQ_APPS + PROJECT_APPS
