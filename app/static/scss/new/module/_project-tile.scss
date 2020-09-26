@@ -27,6 +27,9 @@ $gallery-size: 20;
         font-weight: 400;
         margin-top: 0;
         margin-bottom: 3px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
     }
 
     &__description {
@@ -35,6 +38,8 @@ $gallery-size: 20;
         color: $second-font-color;
         max-height: 34px;
         overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
     }
 
     &__category {
