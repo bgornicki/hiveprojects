@@ -85,7 +85,7 @@ class Command(NoArgsCommand):
                 In case of any question, don't hesitate to ask me! :)
                 """.format(
                     instruction_title='Tutorial: How to add/edit a project on HiveProjects.com',
-                    instruction_url='https://hive.blog/utopian-io/@noisy/pre-release-tutorial-how-to-add-edit-a-project-on-steemprojects-com',
+                    instruction_url='https://peakd.com/utopian-io/@noisy/pre-release-tutorial-how-to-add-edit-a-project-on-steemprojects-com',
                 )
             )
 

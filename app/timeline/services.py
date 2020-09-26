@@ -54,7 +54,7 @@ class RulebookService(metaclass=RulebookServiceABC):
 
 
 class HivePostService(RulebookService):
-    DEFAULT_HIVE_INTERFACE = 'https://hive.blog'
+    DEFAULT_HIVE_INTERFACE = 'https://peakd.com'
 
     @staticmethod
     def post_to_event(post, project):
