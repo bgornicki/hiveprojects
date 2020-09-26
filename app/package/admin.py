@@ -1,5 +1,6 @@
 from django.contrib import admin
 from reversion.admin import VersionAdmin
+from simple_history.admin import SimpleHistoryAdmin
 
 from package.models import (
     Category,
@@ -16,7 +17,7 @@ class PackageExampleInline(admin.TabularInline):
     model = PackageExample
 
 
-class PackageAdmin(VersionAdmin):
+class PackageAdmin(SimpleHistoryAdmin):
 
     def render_change_form(self, request, context, *args, **kwargs):
         context['adminform'].form.fields['main_img'].queryset = ProjectImage.objects.filter(project_id=kwargs['obj'].id)
