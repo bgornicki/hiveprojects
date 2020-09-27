@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="{{ STATIC_URL }}css/package.css?deployment={{ DEPLOYMENT_DATETIME }}" type="text/css" />
   <link rel="stylesheet" href="{{ STATIC_URL }}css/timeline.css?deployment={{ DEPLOYMENT_DATETIME }}" type="text/css" />
   <link rel="stylesheet" href="{{ STATIC_URL }}css/lightslider.css?deployment={{ DEPLOYMENT_DATETIME }}" type="text/css"/>
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/lightgallery.css?deployment={{ DEPLOYMENT_DATETIME }}" type="text/css"/>
   {{ block.super }}
 {% endblock %}
 
@@ -192,13 +193,13 @@
         <div class="m-gallery" >
             <ul id="image-gallery" class="cS-hidden">
                 {% if not project_imgs %}
-                    <li>
+                    <li data-src="{{ STATIC_URL }}img/please_add_images.png">
                         <img class="m-gallery__image" src="{{ STATIC_URL }}img/please_add_images.png"/>
                     </li>
                 {% else %}
                     {% for img in project_imgs %}
-                        <li data-thumb="{{ img|thumb:64 }}">
-                            <img class="m-gallery__image" src="{{ img|thumb:1280 }}"/>
+                        <li data-thumb="{{ img|thumb:64 }}" data-src="{{ img|thumb:1920 }}">
+                            <img class="m-gallery__image" src="{{ img|thumb:1920 }}"/>
                         </li>
                     {% endfor %}
                 {% endif %}
@@ -253,6 +254,7 @@
 
 {% block extra_body %}
 <script src="{{ STATIC_URL }}js/lightslider.js"></script>
+<script src="{{ STATIC_URL }}js/lightgallery.min.js"></script>
 <script>
      $(document).ready(function() {
         $('#image-gallery').lightSlider({
@@ -260,13 +262,17 @@
             item:1,
             thumbItem:9,
             slideMargin: 0,
+            enableDrag: false,
             speed:500,
             auto:false,
             loop:true,
             adaptiveHeight: true,
             verticalHeight: 200,
-            onSliderLoad: function() {
+            onSliderLoad: function(el) {
                 $('#image-gallery').removeClass('cS-hidden');
+                el.lightGallery({
+                    selector: '#image-gallery .lslide'
+                });
             }
         });
     });
