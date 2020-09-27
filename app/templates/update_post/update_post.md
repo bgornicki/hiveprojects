@@ -1,8 +1,8 @@
 ![](https://files.peakd.com/file/peakd-hive/engrave/IHxPwBD1-hiveprojects_update.png)
 
-# What is Hive Projects?
+# What is [Hive Projects](https://hiveprojects.io)?
 
-Hive Projects is the biggest directory of apps, sites, tools, and scripts created for the Hive ecosystem. This website is an entirely volunteer-driven effort. That includes coding time and hosting costs. If you wish to help or show your gratitude, there are plenty of ways in which you can do that:
+[Hive Projects](https://hiveprojects.io) is the biggest directory of apps, sites, tools, and scripts created for the Hive ecosystem. This website is an entirely volunteer-driven effort. That includes coding time and hosting costs. If you wish to help or show your gratitude, there are plenty of ways in which you can do that:
  * upvote this post
  * reblog or cross-post it into your favorite community
  * contribute to HiveProjects, by adding a new project - everyone can do it!
@@ -20,6 +20,9 @@ Previous post: [{{ last_post.title }}]({{ last_post.link }})
 
 
 # Newly added projects 
+
+All published projects were moderated and accepted by our **Content Manager** @lukmarcus, who works hard to make [Hive Projects](https://hiveprojects.io) the best and most up-to-date directory of tools and apps in our ecosystem. The entire reward from this post goes to him.
+
 
 {% for item in items %}
 
