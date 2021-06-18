@@ -97,13 +97,13 @@ volumes:
 configs:
   NGINX_CONFIG:
     file: ./nginx/production.conf
-    name: NGINX_CONFIG-${CI_COMMIT_SHA}
+    name: NGINX_CONFIG-${CI_COMMIT_SHORT_SHA}-${CI_JOB_ID}
   MAINTENANCE_PAGE:
     file: ./nginx/maintenance/maintenance.html
-    name: MAINTENANCE_PAGE-${CI_COMMIT_SHA}
+    name: MAINTENANCE_PAGE-${CI_COMMIT_SHORT_SHA}-${CI_JOB_ID}
   ENV_CONFIG:
     file: ${PRODUCTION_ENV_CONFIG}
-    name: ENV_CONFIG-${CI_COMMIT_SHA}
+    name: ENV_CONFIG-${CI_COMMIT_SHORT_SHA}-${CI_JOB_ID}
 
 networks:
   app:
