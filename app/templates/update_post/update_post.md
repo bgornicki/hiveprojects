@@ -21,9 +21,6 @@ Previous post: [{{ last_post.title }}]({{ last_post.link }})
 
 # Newly added projects 
 
-All published projects were moderated and accepted by our **Content Manager** @lukmarcus, who works hard to make [Hive Projects](https://hiveprojects.io) the best and most up-to-date directory of tools and apps in our ecosystem. The entire reward from this post goes to him.
-
-
 {% for item in items %}
 
 ## {{ item.project.name }}
