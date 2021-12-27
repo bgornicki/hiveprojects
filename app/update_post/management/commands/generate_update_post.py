@@ -93,6 +93,7 @@ class Command(NoArgsCommand):
             author=settings.HIVE_ACCOUNT,
             tags=settings.UPDATE_POST_TAGS,
             beneficiaries=beneficiaries,
-            percent_hbd=0)
+            percent_hbd=0,
+            percent_steem_dollars=0)
 
         print('Post published successfully', title)
