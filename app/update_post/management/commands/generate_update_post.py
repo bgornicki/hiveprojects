@@ -74,7 +74,7 @@ class Command(NoArgsCommand):
     def publish_update_post(post, new_projects_count, total_projects_count, post_body):
         permlink = 'hiveprojects-weekly-update-' + str(datetime.date.today()) +  '-' + ''.join(random.choices(string.digits, k=5))
         link = "/@" + settings.HIVE_ACCOUNT + "/" + permlink
-        title = "Hive Projects weekly update: %d projects added, %s listed in total!" % (new_projects_count, total_projects_count)
+        title = "Hive Projects update: %d projects added, %s listed in total!" % (new_projects_count, total_projects_count)
         beneficiaries = [{'account': settings.UPDATE_POST_BENEFICIARY, 'weight': int(settings.UPDATE_POST_BENEFICIARY_WEIGHT)}]
 
         post.link = link
