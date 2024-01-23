@@ -70,9 +70,10 @@ services:
       S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID}
       S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY}
       S3_BUCKET: ${S3_BUCKET}
-      S3_PREFIX: hiveprojects/staging/database
+      S3_PREFIX: backups/hiveprojects/staging/database
       POSTGRES_EXTRA_OPTS: '--schema=public --blobs'
       POSTGRES_HOST: postgres
+      FILENAME: db.sql.gz
     networks:
       - app
 
@@ -85,8 +86,9 @@ services:
       S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID}
       S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY}
       S3_BUCKET: ${S3_BUCKET}
-      S3_PREFIX: hiveprojects/staging/files
+      S3_PREFIX: backups/hiveprojects/staging/files
       SOURCE_PATH: /data/media
+      FILENAME: files.tar.gz
 
 volumes:
   db_redis:
